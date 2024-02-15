@@ -7,11 +7,12 @@ use Exception;
 
 class ProjectService
 {
-    public function createProject(string $name, ?string $description, int $userId)
+    public function createProject(string $name, string $code, ?string $description, int $userId)
     {
         try {
             $project = Project::create([
                 'name' => $name,
+                'code' => $code,
                 'description' => $description,
                 'user_id' => $userId
             ]);

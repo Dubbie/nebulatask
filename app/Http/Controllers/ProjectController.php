@@ -31,6 +31,7 @@ class ProjectController extends Controller
 
         $response = $this->projectService->createProject(
             $data['name'],
+            $data['code'],
             $data['description'] ?? null,
             Auth::user()->id
         );

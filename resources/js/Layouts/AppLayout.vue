@@ -40,7 +40,7 @@ defineProps({
                 <component
                     :is="fullWidth ? 'div' : AppContainer"
                     :class="{
-                        'py-8': !fullWidth,
+                        'py-8 w-full': !fullWidth,
                     }"
                     class="flex-1 flex flex-col"
                 >
