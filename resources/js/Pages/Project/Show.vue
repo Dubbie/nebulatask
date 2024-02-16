@@ -98,7 +98,6 @@ const handleIssueMoved = (issues) => {
         })
         .then((response) => {
             // updateIssues(response.data);
-            console.log("We good");
         })
         .catch((error) => {
             console.log(error);

@@ -30,8 +30,7 @@ watch(
     }
 );
 
-const close = (event) => {
-    console.log(event.target);
+const close = () => {
     if (props.closeable) {
         emit("close");
     }

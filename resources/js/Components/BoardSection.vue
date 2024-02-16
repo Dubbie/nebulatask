@@ -77,6 +77,10 @@ const handleChange = (event) => {
     }
 };
 
+const checkSelected = (issue) => {
+    return issue.id === selectedIssue.value?.id;
+};
+
 const emit = defineEmits(["new-issue", "added-issue", "removed-issue"]);
 
 watch(
@@ -158,7 +162,7 @@ watch(
                 <IssueCard
                     @click="handleShowIssueDetailsModal(element)"
                     :issue="element"
-                    :selected="selectedIssue?.id == element.id"
+                    :selected="checkSelected(element)"
                     class="mb-3"
                 />
             </template>

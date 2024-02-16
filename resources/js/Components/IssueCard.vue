@@ -18,10 +18,10 @@ const props = defineProps({
 <template>
     <AppCard
         borderless
-        class="border border-zinc-950/10 handle p-4 cursor-pointer"
+        class="border handle p-4 cursor-pointer"
         :class="{
             'border-indigo-500': selected,
-            'hover:border-zinc-950/20': !selected,
+            'border-zinc-950/10 hover:border-zinc-950/20': !selected,
         }"
     >
         <div class="flex items-center justify-between mb-2">
