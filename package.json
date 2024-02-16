@@ -19,7 +19,10 @@
         "vue": "^3.2.31"
     },
     "dependencies": {
+        "@headlessui/vue": "^1.7.19",
         "@tabler/icons-vue": "^2.47.0",
+        "@tinymce/tinymce-vue": "^5.1.1",
+        "mitt": "^3.0.1",
         "vuedraggable": "^4.1.0"
     }
 }

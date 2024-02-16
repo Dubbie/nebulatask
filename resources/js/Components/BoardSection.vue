@@ -3,9 +3,13 @@ import { IconDots, IconPlus } from "@tabler/icons-vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import AppButton from "@/Components/AppButton.vue";
 import Dropdown from "@/Components/Dropdown.vue";
-import { getCurrentInstance, ref } from "vue";
+import { getCurrentInstance, onMounted, onUpdated, ref, watch } from "vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import { useForm } from "@inertiajs/vue3";
+import IssueCard from "@/Components/IssueCard.vue";
+import AddIssueButton from "@/Pages/Project/Partials/AddIssueButton.vue";
+import IssueDetailsModal from "@/Components/IssueDetailsModal.vue";
+import draggable from "vuedraggable";
 
 const props = defineProps({
     projectId: {
@@ -18,9 +22,13 @@ const props = defineProps({
     },
 });
 
+const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const deleteSectionForm = useForm({
     _method: "DELETE",
 });
+const issues = ref(props.section.issues);
+const showIssueDetailsModal = ref(false);
+const selectedIssue = ref(null);
 const handleHover = ref(false);
 const showConfirmDelete = ref(false);
 
@@ -42,12 +50,54 @@ const handleDeleteBoardSection = () => {
     showConfirmDelete.value = false;
 };
 
-const issues = [];
+const handleShowIssueDetailsModal = (issue) => {
+    selectedIssue.value = issue;
+    showIssueDetailsModal.value = true;
+};
+
+const handleHideIssueDetailsModal = () => {
+    selectedIssue.value = null;
+    showIssueDetailsModal.value = false;
+};
+
+const handleChange = (event) => {
+    if ("added" in event) {
+        emitter.emit("issue-moved-across", {
+            issueId: event.added.element.id,
+            boardSectionId: props.section.id,
+            newIndex: event.added.newIndex,
+        });
+    } else if ("removed" in event) {
+        // Remove, dont care
+    } else {
+        emitter.emit("issue-sequence-updated", issues);
+    }
+};
+
+const emit = defineEmits(["new-issue", "added-issue", "removed-issue"]);
+
+watch(
+    () => props.section.issues,
+    (newIssues) => {
+        issues.value = newIssues;
+
+        if (selectedIssue.value) {
+            const foundIssue = newIssues.find((issue) => {
+                return issue.id === selectedIssue.value.id;
+            });
+
+            if (foundIssue) {
+                selectedIssue.value = foundIssue;
+            }
+        }
+    },
+    { deep: true }
+);
 </script>
 
 <template>
     <div
-        class="shrink-0 flex flex-col rounded-lg w-64 px-2"
+        class="relative shrink-0 flex flex-col rounded-lg w-64 px-2"
         :class="{
             'bg-transparent': !handleHover,
             'bg-zinc-200/30 cursor-pointer': handleHover,
@@ -60,12 +110,15 @@ const issues = [];
         >
             <p class="flex-1 text-sm text-zinc-500 font-semibold">
                 {{ section.name }}
-                <span class="text-xs text-zinc-300 ms-1">0</span>
+                <span class="text-xs text-zinc-300 ms-1">{{
+                    section.issues.length
+                }}</span>
             </p>
 
             <div class="flex space-x-1 -my-1">
                 <div
                     class="p-1 rounded-lg text-zinc-400 hover:bg-zinc-950/5 hover:text-zinc-600"
+                    @click="$emit('new-issue', section)"
                 >
                     <IconPlus size="16" />
                 </div>
@@ -90,22 +143,44 @@ const issues = [];
             </div>
         </div>
 
-        <div v-if="issues.length > 0">
-            <div class="bg-white rounded-lg">
-                <p>Ticket list</p>
-            </div>
-        </div>
+        <draggable
+            v-model="issues"
+            group="section-issues"
+            @change="handleChange"
+            item-key="id"
+            handle=".handle"
+            ghost-class="ghost"
+        >
+            <template #item="{ element }">
+                <IssueCard
+                    @click="handleShowIssueDetailsModal(element)"
+                    :issue="element"
+                    class="mb-3"
+                />
+            </template>
+        </draggable>
         <div
-            v-else
-            class="h-full bg-gradient-to-b rounded-2xl from-zinc-950/5 to-transparent p-2"
+            v-if="issues.length === 0"
+            class="h-full absolute top-0 pt-11 inset-x-0 pointer-events-none"
         >
             <div
-                class="bg-white rounded-xl py-1 flex items-center justify-center space-x-2"
-            >
-                <IconPlus class="text-zinc-400 -ms-4" size="16" />
-                <p class="font-semibold text-sm text-zinc-600">Add task</p>
-            </div>
+                class="h-full rounded-2xl bg-gradient-to-b from-zinc-950/5 to-transparent"
+            ></div>
         </div>
+
+        <AddIssueButton
+            class="relative z-10"
+            :class="{
+                'mt-2': issues.length == 0,
+            }"
+            @click="$emit('new-issue', section)"
+        />
+
+        <IssueDetailsModal
+            :issue="selectedIssue"
+            :show="showIssueDetailsModal"
+            @close="handleHideIssueDetailsModal"
+        />
 
         <ConfirmationModal
             max-width="sm"

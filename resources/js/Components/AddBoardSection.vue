@@ -1,6 +1,6 @@
 <script setup>
 import { IconPlus } from "@tabler/icons-vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import TextInput from "@/Components/TextInput.vue";
 import { useForm } from "@inertiajs/vue3";
 
@@ -12,7 +12,7 @@ const props = defineProps({
 });
 
 const editing = ref(false);
-
+const loading = ref(false);
 const newSectionForm = useForm({
     name: "",
 });
@@ -25,6 +25,7 @@ const handleClose = () => {
     }
 
     // Create new section
+    loading.value = true;
     newSectionForm.post(
         route("board-section.store", {
             project: props.project.id,
@@ -34,20 +35,27 @@ const handleClose = () => {
             onSuccess: () => {
                 newSectionForm.reset();
                 editing.value = false;
+                loading.value = false;
             },
         }
     );
 };
+
+const handleKeydown = (event) => {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        event.currentTarget.blur();
+        handleClose();
+    }
+};
 </script>
 
 <template>
-    <div
-        class="group shrink-0 flex flex-col rounded-xl w-full max-w-64 cursor-pointer"
-        @click="editing = true"
-    >
+    <div class="shrink-0 flex flex-col rounded-xl w-full max-w-64 px-2">
         <div
             v-if="!editing"
-            class="p-2 flex space-x-2 items-center mb-2 rounded-xl group-hover:bg-zinc-100"
+            class="cursor-pointer p-2 flex space-x-2 items-center mb-2 rounded-xl group hover:bg-zinc-100"
+            @click="editing = true"
         >
             <IconPlus
                 class="text-zinc-400 group-hover:text-zinc-700"
@@ -71,12 +79,18 @@ const handleClose = () => {
             <div class="relative">
                 <IconPlus
                     class="absolute left-2 top-2.5 text-zinc-700"
+                    v-show="!loading"
                     size="16"
                 />
                 <TextInput
                     autofocus
-                    class="pl-8 mb-2 text-sm block w-full"
+                    class="mb-2 text-sm block w-full"
+                    :class="{
+                        'pl-8': !loading,
+                    }"
                     v-model="newSectionForm.name"
+                    @keydown="handleKeydown"
+                    :disabled="loading"
                     placeholder="Section name"
                 />
             </div>

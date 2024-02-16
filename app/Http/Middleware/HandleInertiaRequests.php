@@ -37,7 +37,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
-            //
+            'tiny_api_key' => config('tiny.api_key'),
         ]);
     }
 }

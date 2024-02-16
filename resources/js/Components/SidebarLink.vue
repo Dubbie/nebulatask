@@ -16,10 +16,10 @@ const props = defineProps({
     <div>
         <Link
             :href="href"
-            class="flex space-x-2 items-center p-2 font-semibold rounded-lg hover:bg-gray-100"
+            class="flex space-x-2 items-center p-2 font-semibold rounded-lg"
             :class="{
                 'bg-zinc-200 text-zinc-600 ': active,
-                'text-gray-600': !active,
+                'text-gray-600 hover:bg-gray-100': !active,
             }"
         >
             <slot />

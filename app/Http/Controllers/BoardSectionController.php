@@ -20,7 +20,9 @@ class BoardSectionController extends Controller
 
     public function store(Project $project, StoreBoardSection $request)
     {
-        $project->boardSections()->create($request->validated());
+        $project->boardSections()->create(array_merge($request->validated(), [
+            'sequence' => $project->boardSections->count(),
+        ]));
 
         return redirect()->route('project.show', $project);
     }

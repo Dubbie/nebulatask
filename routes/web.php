@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\IssueController as IssueApiController;
 use App\Http\Controllers\BoardSectionController;
+use App\Http\Controllers\IssueController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -43,4 +45,17 @@ Route::middleware([
     Route::post('/projects/{project}/board-section/store', [BoardSectionController::class, 'store'])->name('board-section.store');
     Route::put('/projects/{project}/board-section/sequence/update', [BoardSectionController::class, 'updateSequence'])->name('board-section.sequence.update');
     Route::delete('/projects/{project}/board-section/{boardSection}/destroy', [BoardSectionController::class, 'destroy'])->name('board-section.destroy');
+
+    Route::post('/issue/store', [IssueController::class, 'store'])->name('issue.store');
+    Route::delete('/issue/{issue}}destroy', [IssueController::class, 'destroy'])->name('issue.destroy');
+    Route::put('/board-section/{boardSection}/issues/sequence/update', [IssueController::class, 'updateSequence'])->name('issue.sequence.update');
+    Route::put('/issue/{issue}/moved', [IssueController::class, 'handleMove'])->name('issue.move');
+
+    Route::get('/api/project/{project}/issues', [IssueApiController::class, 'fetchByProject'])->name('api.issue.fetch-by-project');
+    Route::put('/api/issues/sequence/update', [IssueApiController::class, 'updateSequence'])->name('api.issue.sequence.update');
+    Route::put('/api/issue/{issue}/description/update', [IssueApiController::class, 'updateDescription'])->name('api.issue.description.update');
+    Route::put('/api/issue/{issue}/title/update', [IssueApiController::class, 'updateTitle'])->name('api.issue.title.update');
+    Route::put('/api/issue/{issue}/status/update', [IssueApiController::class, 'updateStatus'])->name('api.issue.status.update');
+    Route::get('/api/issue/{issue}', [IssueApiController::class, 'fetch'])->name('api.issue.fetch');
+    Route::put('/api/issue/{issue}/moved', [IssueApiController::class, 'handleMove'])->name('api.issue.move');
 });

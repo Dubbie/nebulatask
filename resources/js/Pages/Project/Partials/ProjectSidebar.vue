@@ -12,7 +12,7 @@ const props = defineProps({
 
 <template>
     <div
-        class="col-span-1 px-4 py-8 sm:px-6 lg:px-8 border-r border-zinc-950/10"
+        class="col-span-3 xl:col-span-2 px-4 py-8 sm:px-6 lg:px-8 border-r border-zinc-950/10"
     >
         <div class="mb-6">
             <h1 class="text-zinc-700 font-semibold">

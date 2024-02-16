@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
+use App\Models\IssueStatus;
 use App\Models\Project;
 use App\Services\ProjectService;
 use Illuminate\Http\Request;
@@ -42,7 +43,8 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         return Inertia::render('Project/Show', [
-            'project' => $project->load('boardSections')
+            'project' => $project->load('boardSections', 'boardSections.issues'),
+            'statuses' => IssueStatus::all(),
         ]);
     }
 

@@ -15,4 +15,9 @@ class BoardSection extends Model
     {
         return $this->belongsTo(Project::class);
     }
+
+    public function issues()
+    {
+        return $this->hasMany(Issue::class)->orderBy('sequence');
+    }
 }

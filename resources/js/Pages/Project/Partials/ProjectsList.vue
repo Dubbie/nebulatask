@@ -43,7 +43,7 @@ const emit = defineEmits(["delete-project"]);
                         </Link>
                     </TableCell>
                     <TableCell>
-                        <p>{{ project.name }}</p>
+                        <p>{{ project.code }}</p>
                     </TableCell>
                     <TableCell>
                         <div class="flex">
