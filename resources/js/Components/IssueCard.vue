@@ -1,23 +1,51 @@
 <script setup>
 import AppCard from "@/Components/AppCard.vue";
 import IssueStatusIcon from "@/Components/IssueStatusIcon.vue";
+import { IconSitemap } from "@tabler/icons-vue";
 
 const props = defineProps({
     issue: {
         type: Object,
         required: true,
     },
+    selected: {
+        type: Boolean,
+        default: false,
+    },
 });
 </script>
 
 <template>
-    <AppCard class="handle px-4 py-2 cursor-pointer hover:bg-zinc-100/50">
-        <p class="font-semibold text-xs text-zinc-400">{{ issue.code }}</p>
-        <p class="font-medium text-zinc-700 mb-2">{{ issue.title }}</p>
+    <AppCard
+        borderless
+        class="border border-zinc-950/10 handle p-4 cursor-pointer"
+        :class="{
+            'border-indigo-500': selected,
+            'hover:border-zinc-950/20': !selected,
+        }"
+    >
+        <div class="flex items-center justify-between mb-2">
+            <p class="font-medium leading-4 text-zinc-700">
+                {{ issue.title }}
+            </p>
+
+            <div
+                v-if="issue.sub_issues.length > 0"
+                class="flex items-center space-x-2"
+            >
+                <IconSitemap class="text-zinc-400" size="16" />
+                <p class="text-sm">+{{ issue.sub_issues.length }}</p>
+            </div>
+        </div>
 
         <div class="flex items-center space-x-2">
             <div class="flex-1">
-                <IssueStatusIcon :status="issue.status" />
+                <div class="flex items-center space-x-2">
+                    <IssueStatusIcon :status="issue.status" />
+                    <p class="font-semibold text-xs text-zinc-400">
+                        {{ issue.code }}
+                    </p>
+                </div>
             </div>
 
             <img

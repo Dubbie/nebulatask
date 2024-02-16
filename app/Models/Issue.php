@@ -16,13 +16,15 @@ class Issue extends Model
         'due_date',
         'user_id',
         'issue_status_id',
+        'parent_issue_id',
         'board_section_id',
         'sequence'
     ];
 
     protected $with = [
         'status',
-        'assignee'
+        'assignee',
+        'subIssues',
     ];
 
     protected $appends = [
@@ -46,6 +48,11 @@ class Issue extends Model
     public function assignee()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
+    public function subIssues()
+    {
+        return $this->hasMany(Issue::class, 'parent_issue_id')->orderBy('sequence');
     }
 
     public function boardSection()

@@ -1,15 +1,16 @@
 <script setup>
-import Modal from "@/Components/Modal.vue";
 import { IconCalendarTime } from "@tabler/icons-vue";
 import AppButton from "@/Components/AppButton.vue";
 import { IconTrashFilled } from "@tabler/icons-vue";
-import { getCurrentInstance, inject, ref, watch } from "vue";
+import { getCurrentInstance, inject, provide, ref, watch } from "vue";
 import { useForm, usePage } from "@inertiajs/vue3";
 import Editor from "@tinymce/tinymce-vue";
 import axios from "axios";
 import SelectInput from "@/Components/SelectInput.vue";
 import IssueStatusIcon from "@/Components/IssueStatusIcon.vue";
 import IssueTitle from "@/Components/IssueTitle.vue";
+import SubIssues from "@/Components/SubIssues.vue";
+import AppSlideover from "@/Components/AppSlideover.vue";
 
 const props = defineProps({
     show: {
@@ -21,6 +22,8 @@ const props = defineProps({
         required: false,
     },
 });
+const issue = ref(null);
+provide("issue", issue);
 
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const savingDescription = ref(false);
@@ -113,6 +116,8 @@ const emit = defineEmits(["close"]);
 watch(
     props,
     (newProps) => {
+        issue.value = newProps.issue;
+
         description.value = newProps.issue ? newProps.issue.description : null;
         status.value = newProps.issue ? newProps.issue.issue_status_id : 1;
     },
@@ -121,7 +126,7 @@ watch(
 </script>
 
 <template>
-    <Modal :show="show" @close="handleClosing">
+    <AppSlideover :show="show" @close="handleClosing">
         <div
             class="fixed inset-0"
             v-show="confirmDelete"
@@ -239,13 +244,13 @@ watch(
                 }"
                 @click.stop="editing = 'description'"
             >
-                <div class="p-4">
+                <div class="p-4 text-zinc-950">
                     <div
-                        class="prose text-sm"
+                        class="prose prose-zinc text-sm"
                         v-if="description"
                         v-html="description"
                     ></div>
-                    <p v-else class="text-zinc-500">No description</p>
+                    <p v-else class="text-zinc-300">No description</p>
                 </div>
             </div>
             <div v-show="editing === 'description'" class="-mx-4 -mb-4">
@@ -262,6 +267,8 @@ watch(
                     :api-key="tinyApiKey"
                 />
             </div>
+
+            <SubIssues class="mt-8" />
         </div>
-    </Modal>
+    </AppSlideover>
 </template>

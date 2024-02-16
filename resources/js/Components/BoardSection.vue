@@ -3,7 +3,7 @@ import { IconDots, IconPlus } from "@tabler/icons-vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import AppButton from "@/Components/AppButton.vue";
 import Dropdown from "@/Components/Dropdown.vue";
-import { getCurrentInstance, onMounted, onUpdated, ref, watch } from "vue";
+import { getCurrentInstance, ref, watch } from "vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import { useForm } from "@inertiajs/vue3";
 import IssueCard from "@/Components/IssueCard.vue";
@@ -27,6 +27,9 @@ const deleteSectionForm = useForm({
     _method: "DELETE",
 });
 const issues = ref(props.section.issues);
+const rootIssues = issues.value.filter((issue) => {
+    return issue.parent_issue_id === null;
+});
 const showIssueDetailsModal = ref(false);
 const selectedIssue = ref(null);
 const handleHover = ref(false);
@@ -144,7 +147,7 @@ watch(
         </div>
 
         <draggable
-            v-model="issues"
+            v-model="rootIssues"
             group="section-issues"
             @change="handleChange"
             item-key="id"
@@ -155,6 +158,7 @@ watch(
                 <IssueCard
                     @click="handleShowIssueDetailsModal(element)"
                     :issue="element"
+                    :selected="selectedIssue?.id == element.id"
                     class="mb-3"
                 />
             </template>

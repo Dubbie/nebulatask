@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\IssueController as IssueApiController;
+use App\Http\Controllers\Api\SubIssueController;
 use App\Http\Controllers\BoardSectionController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\ProjectController;
@@ -53,9 +54,12 @@ Route::middleware([
 
     Route::get('/api/project/{project}/issues', [IssueApiController::class, 'fetchByProject'])->name('api.issue.fetch-by-project');
     Route::put('/api/issues/sequence/update', [IssueApiController::class, 'updateSequence'])->name('api.issue.sequence.update');
+    Route::post('/api/issue/{issue}/sub-issue/store', [IssueApiController::class, 'storeSubIssue'])->name('api.issue.sub-issue.store');
     Route::put('/api/issue/{issue}/description/update', [IssueApiController::class, 'updateDescription'])->name('api.issue.description.update');
     Route::put('/api/issue/{issue}/title/update', [IssueApiController::class, 'updateTitle'])->name('api.issue.title.update');
     Route::put('/api/issue/{issue}/status/update', [IssueApiController::class, 'updateStatus'])->name('api.issue.status.update');
     Route::get('/api/issue/{issue}', [IssueApiController::class, 'fetch'])->name('api.issue.fetch');
     Route::put('/api/issue/{issue}/moved', [IssueApiController::class, 'handleMove'])->name('api.issue.move');
+
+    Route::delete('/api/sub-issue/{subIssue}/destroy', [SubIssueController::class, 'destroy'])->name('api.sub-issue.destroy');
 });

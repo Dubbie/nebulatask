@@ -38,6 +38,7 @@ defineProps({
             <!-- Page Content -->
             <main class="flex-1 flex flex-col">
                 <component
+                    id="page-content"
                     :is="fullWidth ? 'div' : AppContainer"
                     :class="{
                         'py-8 w-full': !fullWidth,

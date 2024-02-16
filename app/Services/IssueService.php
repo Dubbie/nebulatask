@@ -27,4 +27,17 @@ class IssueService
             return false;
         }
     }
+
+    public function createSubIssue(int $parentIssueId, array $data)
+    {
+        $parentIssue = Issue::find($parentIssueId);
+        Issue::create(array_merge($data, [
+            'parent_issue_id' => $parentIssueId,
+            'sequence' => Issue::where('parent_issue_id', $parentIssueId)->max('sequence') + 1,
+            'user_id' => auth()->user()->id,
+            'issue_status_id' => 1,
+            'project_id' => $parentIssue->project_id,
+            'board_section_id' => $parentIssue->board_section_id,
+        ]));
+    }
 }

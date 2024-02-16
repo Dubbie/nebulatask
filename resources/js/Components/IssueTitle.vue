@@ -65,6 +65,7 @@ const reset = (newTitle = props.issue.title) => {
                 class="font-semibold py-1 text-2xl flex-1"
                 autofocus
                 v-model="title"
+                @keyup.enter="updateTitle"
             />
         </div>
     </div>

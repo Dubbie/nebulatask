@@ -50,7 +50,7 @@ const colorClasses = computed(() => {
     }
 
     if (props.outline) {
-        return "bg-transparent text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.15)] hover:bg-zinc-300/10";
+        return "bg-transparent text-zinc-950 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.15)] hover:bg-zinc-300/10";
     }
 
     return {
@@ -73,7 +73,7 @@ const colorClasses = computed(() => {
 const sizeClasses = computed(() => {
     return {
         xs: "px-2 py-1 text-xs",
-        sm: "px-2.5 py-1 text-xs",
+        sm: "px-2.5 py-1.5 text-xs",
         md: "px-3 py-1.5 text-sm",
         lg: "px-4 py-2.5 text-lg",
     }[props.size];

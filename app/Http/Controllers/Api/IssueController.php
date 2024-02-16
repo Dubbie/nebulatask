@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreSubIssueRequest;
 use App\Http\Requests\UpdateIssuesSequenceRequest;
 use App\Models\BoardSection;
 use App\Models\Issue;
@@ -124,6 +125,24 @@ class IssueController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $responseData
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function storeSubIssue(Issue $issue, StoreSubIssueRequest $request)
+    {
+        $data = $request->validated();
+
+        try {
+            $this->issueService->createSubIssue($issue->id, $data);
+
+            return response()->json([
+                'success' => true
             ]);
         } catch (Exception $e) {
             return response()->json([
