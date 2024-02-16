@@ -69,12 +69,12 @@ const maxWidthClass = computed(() => {
                 scroll-region
             >
                 <transition
-                    enter-active-class="ease-out duration-300"
-                    enter-from-class="opacity-0 translate-x-10"
+                    enter-active-class="transform transition will-change ease-in duration-500"
+                    enter-from-class="opacity-0 translate-x-full"
                     enter-to-class="opacity-100 translate-x-0"
-                    leave-active-class="ease-in duration-200"
+                    leave-active-class="transform transition will-change ease-out duration-300"
                     leave-from-class="opacity-100 translate-x-0"
-                    leave-to-class="opacity-0 translate-x-10"
+                    leave-to-class="opacity-0 translate-x-full"
                 >
                     <div class="h-full" v-show="show">
                         <div
