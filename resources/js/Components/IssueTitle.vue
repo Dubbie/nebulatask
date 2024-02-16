@@ -1,5 +1,5 @@
 <script setup>
-import { getCurrentInstance, onMounted, onUpdated, ref } from "vue";
+import { getCurrentInstance, onMounted, onUpdated, ref, watch } from "vue";
 import TextInput from "@/Components/TextInput.vue";
 const props = defineProps({
     issue: {
@@ -45,6 +45,13 @@ const reset = (newTitle = props.issue.title) => {
     editing.value = false;
     title.value = newTitle;
 };
+
+watch(
+    () => props.issue.title,
+    (newTitle) => {
+        title.value = newTitle;
+    }
+);
 </script>
 
 <template>
