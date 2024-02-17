@@ -71,6 +71,15 @@ const colorClasses = computed(() => {
     }[props.color];
 });
 const sizeClasses = computed(() => {
+    if (props.square) {
+        return {
+            xs: "p-1 text-xs",
+            sm: "p-1.5 text-xs",
+            md: "p-2 text-sm",
+            lg: "px-4 py-2.5 text-lg",
+        }[props.size];
+    }
+
     return {
         xs: "px-2 py-1 text-xs",
         sm: "px-2.5 py-1.5 text-xs",

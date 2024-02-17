@@ -40,4 +40,25 @@ class IssueService
             'board_section_id' => $parentIssue->board_section_id,
         ]));
     }
+
+    public function toggleComplete(Issue $issue)
+    {
+        Log::info($issue);
+        try {
+            $issue->update([
+                'issue_status_id' => $issue->issue_status_id == 1 ? 4 : 1
+            ]);
+
+            return response()->json([
+                'success' => true
+            ]);
+        } catch (Exception $exception) {
+            Log::error($exception->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => $exception->getMessage()
+            ], 500);
+        }
+    }
 }

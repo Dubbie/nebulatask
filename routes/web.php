@@ -62,4 +62,5 @@ Route::middleware([
     Route::put('/api/issue/{issue}/moved', [IssueApiController::class, 'handleMove'])->name('api.issue.move');
 
     Route::delete('/api/sub-issue/{subIssue}/destroy', [SubIssueController::class, 'destroy'])->name('api.sub-issue.destroy');
+    Route::put('/api/sub-issue/{subIssue}/complete/toggle', [SubIssueController::class, 'toggleComplete'])->name('api.sub-issue.complete.toggle');
 });

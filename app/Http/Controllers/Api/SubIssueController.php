@@ -4,9 +4,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Issue;
+use App\Services\IssueService;
 
 class SubIssueController extends Controller
 {
+    private IssueService $issueService;
+
+    public function __construct(IssueService $issueService)
+    {
+        $this->issueService = $issueService;
+    }
+
     public function destroy(Issue $subIssue)
     {
         try {
@@ -21,5 +29,10 @@ class SubIssueController extends Controller
                 'message' => $exception->getMessage()
             ]);
         }
+    }
+
+    public function toggleComplete(Issue $subIssue)
+    {
+        return $this->issueService->toggleComplete($subIssue);
     }
 }

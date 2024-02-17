@@ -2,10 +2,13 @@
 import { IconSquareRounded } from "@tabler/icons-vue";
 import { IconCalendarDue } from "@tabler/icons-vue";
 import { IconSquareRoundedCheckFilled } from "@tabler/icons-vue";
-import { computed, getCurrentInstance } from "vue";
-import Dropdown from "./Dropdown.vue";
+import { computed, getCurrentInstance, ref, watch } from "vue";
+import Dropdown from "@/Components/Dropdown.vue";
 import { IconDots } from "@tabler/icons-vue";
-import DropdownLink from "./DropdownLink.vue";
+import DropdownLink from "@/Components/DropdownLink.vue";
+import axios from "axios";
+import { IconCheck } from "@tabler/icons-vue";
+import AppButton from "./AppButton.vue";
 
 const props = defineProps({
     subIssue: {
@@ -15,8 +18,11 @@ const props = defineProps({
 });
 
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
+const showActions = ref(false);
+const preToggle = ref(false);
 const completed = computed(() => {
-    return props.subIssue.issue_status_id === 4;
+    const isComplete = props.subIssue.issue_status_id === 4;
+    return preToggle.value ? !isComplete : isComplete;
 });
 
 const deleteSubIssue = () => {
@@ -31,26 +37,59 @@ const deleteSubIssue = () => {
             });
     }
 };
+
+const toggleComplete = () => {
+    preToggle.value = true;
+
+    axios
+        .put(
+            route("api.sub-issue.complete.toggle", {
+                subIssue: props.subIssue.id,
+            })
+        )
+        .then((response) => {
+            emitter.emit("update-issue", props.subIssue.parent_issue_id);
+        });
+};
+
+watch(props, (newProps) => {
+    if (newProps.subIssue) {
+        preToggle.value = false;
+    }
+});
 </script>
 <template>
-    <div class="group flex items-center space-x-2 py-1">
-        <div>
+    <div
+        class="flex items-center space-x-2 py-1"
+        @mouseenter="showActions = true"
+        @mouseleave="showActions = false"
+    >
+        <div class="cursor-pointer" @click="toggleComplete()">
             <IconSquareRoundedCheckFilled
-                class="text-green-500"
+                class="text-green-500 hover:text-green-500/50"
                 v-if="completed"
             />
-            <IconSquareRounded
-                class="text-zinc-400 hover:text-zinc-600"
-                v-else
-            />
+            <div class="group relative" v-else>
+                <IconCheck
+                    :stroke-width="3"
+                    class="pointer-events-none absolute mx-1.5 my-1.5 top-0 left-0 text-zinc-300 opacity-0 size-3 group-hover:opacity-100"
+                />
+                <IconSquareRounded
+                    class="text-zinc-300 group-hover:text-zinc-400"
+                />
+            </div>
         </div>
 
-        <p class="flex-1 font-semibold">
+        <p
+            class="flex-1 font-semibold"
+            :class="{ 'line-through text-zinc-300': completed }"
+        >
             {{ subIssue.title }}
         </p>
 
         <div
-            class="opacity-0 group-hover:opacity-100 flex items-center space-x-2"
+            class="opacity-0 flex items-center space-x-2"
+            :class="{ 'opacity-100': showActions }"
         >
             <!-- <img
                 :src="subIssue.assignee.profile_photo_url"
@@ -63,9 +102,11 @@ const deleteSubIssue = () => {
 
             <Dropdown>
                 <template #trigger>
-                    <IconDots
-                        class="text-zinc-400 hover:text-zinc-600 size-6"
-                    />
+                    <AppButton size="xs" plain square>
+                        <IconDots
+                            class="cursor-pointer rounded-lg text-zinc-400 size-5"
+                        />
+                    </AppButton>
                 </template>
 
                 <template #content>
