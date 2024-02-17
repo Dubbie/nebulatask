@@ -52,24 +52,30 @@ const handleHideNewIssueModal = () => {
 };
 
 const updateIssue = (issueId) => {
-    axios.get(route("api.issue.fetch", { issue: issueId })).then((response) => {
-        const targetBoardId = response.data.board_section_id;
+    loadingIssues.value = true;
+    axios
+        .get(route("api.issue.fetch", { issue: issueId }))
+        .then((response) => {
+            const targetBoardId = response.data.board_section_id;
 
-        sections.value
-            .filter((section) => {
-                return section.id === targetBoardId;
-            })
-            .map((section) => {
-                section.issues = section.issues.map((issue) => {
-                    if (issue.id === issueId) {
-                        issue = response.data;
-                    }
-                    return issue;
+            sections.value
+                .filter((section) => {
+                    return section.id === targetBoardId;
+                })
+                .map((section) => {
+                    section.issues = section.issues.map((issue) => {
+                        if (issue.id === issueId) {
+                            issue = response.data;
+                        }
+                        return issue;
+                    });
+
+                    return section;
                 });
-
-                return section;
-            });
-    });
+        })
+        .finally(() => {
+            loadingIssues.value = false;
+        });
 };
 
 const handleIssueMovedAcross = (issueId, boardSectionId, newIndex) => {

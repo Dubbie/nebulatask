@@ -1,17 +1,19 @@
 <script setup>
-import { getCurrentInstance, onMounted, onUpdated, ref, watch } from "vue";
+import {
+    getCurrentInstance,
+    inject,
+    onMounted,
+    onUpdated,
+    ref,
+    watch,
+} from "vue";
 import TextInput from "@/Components/TextInput.vue";
-const props = defineProps({
-    issue: {
-        type: Object,
-        required: true,
-    },
-});
 
+const issue = inject("issue");
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const editing = ref(false);
 const saving = ref(false);
-const title = ref(props.issue.title);
+const title = ref("");
 
 onMounted(() => {
     emitter.on("stop-editing-issue", () => {
@@ -22,15 +24,15 @@ onMounted(() => {
 });
 
 const updateTitle = () => {
-    const oldTitle = props.issue.title;
+    const oldTitle = issue.value.title;
     saving.value = true;
 
     axios
-        .put(route("api.issue.title.update", { issue: props.issue.id }), {
+        .put(route("api.issue.title.update", { issue: issue.value.id }), {
             title: title.value,
         })
         .then((response) => {
-            emitter.emit("update-issue", props.issue.id);
+            emitter.emit("update-issue", issue.value.id);
             reset(title.value);
         })
         .catch((error) => {
@@ -41,15 +43,18 @@ const updateTitle = () => {
         });
 };
 
-const reset = (newTitle = props.issue.title) => {
+const reset = (newTitle = issue.value.title) => {
     editing.value = false;
     title.value = newTitle;
 };
 
 watch(
-    () => props.issue.title,
-    (newTitle) => {
-        title.value = newTitle;
+    issue,
+    (newIssue) => {
+        title.value = newIssue ? newIssue.title : "";
+    },
+    {
+        immediate: true,
     }
 );
 </script>
