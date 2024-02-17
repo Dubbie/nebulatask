@@ -7,6 +7,8 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link } from "@inertiajs/vue3";
+import NavLinkPopover from "./NavLinkPopover.vue";
+import PopoverLink from "./PopoverLink.vue";
 
 const props = defineProps({
     fullWidth: {
@@ -60,12 +62,31 @@ const logout = () => {
                         >
                             Dashboard
                         </NavLink>
-                        <NavLink
-                            :href="route('project.index')"
-                            :active="route().current('project.*')"
-                        >
-                            Projects
-                        </NavLink>
+                        <NavLinkPopover :active="route().current('project.*')">
+                            <template #trigger>
+                                <span>Projects</span>
+                            </template>
+
+                            <template #content>
+                                <!-- <p class="px-2 py-1">Recent projects</p>
+                                <div class="space-y-1">
+                                    <PopoverLink title="Project 1" />
+                                    <PopoverLink title="Project 2" />
+                                    <PopoverLink title="Project 3" />
+                                </div>
+                                <hr class="my-3" /> -->
+                                <!-- <PopoverLink
+                                    :href="route('project.index')"
+                                    title="All projects"
+                                /> -->
+                                <Link
+                                    :href="route('project.index')"
+                                    class="text-zinc-500 hover:text-zinc-950"
+                                >
+                                    <p>All projects</p>
+                                </Link>
+                            </template>
+                        </NavLinkPopover>
                     </div>
                 </div>
 
