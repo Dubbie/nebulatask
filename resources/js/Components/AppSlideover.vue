@@ -1,6 +1,12 @@
 <script setup>
 import { IconX } from "@tabler/icons-vue";
-import { computed, onMounted, onUnmounted, watch } from "vue";
+import {
+    computed,
+    getCurrentInstance,
+    onMounted,
+    onUnmounted,
+    watch,
+} from "vue";
 
 const props = defineProps({
     show: {
@@ -17,6 +23,7 @@ const props = defineProps({
     },
 });
 
+const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const emit = defineEmits(["close"]);
 
 watch(
@@ -42,7 +49,10 @@ const closeOnEscape = (e) => {
     }
 };
 
-onMounted(() => document.addEventListener("keydown", closeOnEscape));
+onMounted(() => {
+    emitter.on("close-slideover", close);
+    document.addEventListener("keydown", closeOnEscape);
+});
 
 onUnmounted(() => {
     document.removeEventListener("keydown", closeOnEscape);
@@ -65,16 +75,16 @@ const maxWidthClass = computed(() => {
         <transition leave-active-class="duration-200">
             <div
                 v-show="show"
-                class="fixed top-16 border-t border-transparent bottom-0 right-0 min-w-[720px] overflow-y-auto pl-8 z-50"
+                class="fixed top-16 border-t border-transparent bottom-0 right-0 min-w-[720px] overflow-y-auto overflow-x-hidden pl-8 z-50"
                 scroll-region
             >
                 <transition
-                    enter-active-class="transform transition will-change ease-in duration-300"
-                    enter-from-class="opacity-0 translate-x-full"
-                    enter-to-class="opacity-100 translate-x-0"
-                    leave-active-class="transform transition will-change ease-out duration-200"
-                    leave-from-class="opacity-100 translate-x-0"
-                    leave-to-class="opacity-0 translate-x-full"
+                    enter-active-class="transform transition will-change ease-out-expo duration-500"
+                    enter-from-class="translate-x-full"
+                    enter-to-class="translate-x-0"
+                    leave-active-class="transform transition will-change ease-out-expo duration-500"
+                    leave-from-class="translate-x-0"
+                    leave-to-class="translate-x-full"
                 >
                     <div class="h-full" v-show="show">
                         <div

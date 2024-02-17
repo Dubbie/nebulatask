@@ -141,6 +141,10 @@ watch(
     { deep: true }
 );
 
+const closeSlideover = () => {
+    emitter.emit("close-slideover");
+};
+
 onMounted(() => {
     emitter.on("update-issue", (issueId) => {
         updateIssue(issueId);
@@ -166,7 +170,7 @@ onMounted(() => {
 
 <template>
     <AppLayout :full-width="true" :title="project.name">
-        <div class="grid grid-cols-12 flex-1">
+        <div class="grid grid-cols-12 flex-1" @click="closeSlideover">
             <ProjectSidebar :project="project" />
 
             <div

@@ -124,6 +124,7 @@ watch(
             class="handle flex items-center p-2 mb-2"
             @mouseenter="handleHover = true"
             @mouseleave="handleHover = false"
+            @click.stop
         >
             <p class="flex-1 text-sm text-zinc-500 font-semibold">
                 {{ section.name }}

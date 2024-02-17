@@ -23,6 +23,7 @@ const props = defineProps({
             'border-indigo-500': selected,
             'border-zinc-950/10 hover:border-zinc-950/20': !selected,
         }"
+        @click.stop
     >
         <div class="flex items-center justify-between mb-2">
             <p class="font-medium leading-4 text-zinc-700">
