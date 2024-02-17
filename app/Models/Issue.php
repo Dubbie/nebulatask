@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Issue extends Model
 {
@@ -63,5 +64,19 @@ class Issue extends Model
     public function project()
     {
         return $this->hasOneThrough(Project::class, BoardSection::class, 'id', 'id', 'board_section_id', 'project_id');
+    }
+
+    public function scopeRootIssues($query)
+    {
+        return $query->whereNull('parent_issue_id');
+    }
+
+    protected static function booted()
+    {
+        static::deleted(function (Issue $issue) {
+            // Reorder existing issues
+            Log::info("Reordering issues for board section {$issue->boardSection->id}");
+            $issue->boardSection->issues()->rootIssues()->where('sequence', '>=', $issue->sequence)->decrement('sequence');
+        });
     }
 }

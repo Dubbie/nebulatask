@@ -13,7 +13,7 @@ import { IconPlus } from "@tabler/icons-vue";
         <p
             class="font-semibold text-sm text-zinc-600 group-hover:text-zinc-700"
         >
-            Add issue
+            New issue
         </p>
     </div>
 </template>

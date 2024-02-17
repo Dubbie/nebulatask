@@ -28,7 +28,7 @@ const colorClasses = computed(() => {
 
 <template>
     <div
-        class="flex items-center justify-center w-fit p-1 aspect-square rounded-md"
+        class="flex items-center justify-center w-fit p-1 aspect-square rounded-lg"
         :class="colorClasses"
     >
         <IconBackground :class="sizeClass" v-if="status.name === 'BACKLOG'" />

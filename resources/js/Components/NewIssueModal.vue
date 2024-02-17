@@ -7,11 +7,11 @@ import TextInput from "@/Components/TextInput.vue";
 import TextareaInput from "@/Components/TextareaInput.vue";
 import InputError from "@/Components/InputError.vue";
 import SelectInput from "@/Components/SelectInput.vue";
-import { inject } from "vue";
+import { computed, getCurrentInstance, inject, ref } from "vue";
 
 const props = defineProps({
-    boardSection: {
-        type: Object,
+    boardSectionId: {
+        type: Number,
         required: false,
     },
     show: {
@@ -20,12 +20,17 @@ const props = defineProps({
     },
 });
 
+const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const statuses = inject("statuses");
+const storing = ref(false);
 const statusOptions = statuses.map((status) => {
     return {
         label: status.formatted_name,
         value: status.id,
     };
+});
+const buttonLabel = computed(() => {
+    return storing.value ? "Creating issue..." : "Create";
 });
 
 const form = useForm({
@@ -33,22 +38,26 @@ const form = useForm({
     description: "",
     due_date: null,
     issue_status_id: statusOptions[0].value,
-    board_section_id: props.boardSection ? props.boardSection.id : null,
+    board_section_id: props.boardSectionId ? props.boardSectionId : null,
 });
 
 const handleSubmit = () => {
     // Update board section id
-    if (props.boardSection) {
-        form.board_section_id = props.boardSection.id;
+    if (props.boardSectionId) {
+        form.board_section_id = props.boardSectionId;
     }
 
-    form.post(route("issue.store"), {
-        preserveScroll: true,
-        onSuccess: () => {
+    storing.value = true;
+    axios
+        .post(route("api.issue.store"), form)
+        .then((response) => {
+            emitter.emit("issue-created", response.data.data);
             form.reset();
             emit("close");
-        },
-    });
+        })
+        .finally(() => {
+            storing.value = false;
+        });
 };
 
 const emit = defineEmits(["close"]);
@@ -153,8 +162,8 @@ const emit = defineEmits(["close"]);
 
         <template #footer>
             <AppButton plain @click="$emit('close')">Cancel</AppButton>
-            <AppButton :disabled="form.processing" @click="handleSubmit">
-                Create
+            <AppButton :disabled="storing" @click="handleSubmit">
+                {{ buttonLabel }}
             </AppButton>
         </template>
     </DialogModal>

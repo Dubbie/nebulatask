@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MoveIssueRequest;
+use App\Http\Requests\StoreIssueRequest;
 use App\Http\Requests\StoreSubIssueRequest;
+use App\Http\Requests\UpdateIssueSequenceRequest;
 use App\Http\Requests\UpdateIssuesSequenceRequest;
 use App\Models\BoardSection;
 use App\Models\Issue;
@@ -90,65 +93,34 @@ class IssueController extends Controller
         }
     }
 
-    public function handleMove(Issue $issue, Request $request)
+    public function handleUpdateSequence(Issue $issue, UpdateIssueSequenceRequest $request)
     {
-        $request->validate(['board_section_id' => 'required', 'sequence' => 'required|integer']);
+        $data = $request->validated();
 
-        try {
-            $start = microtime(true);
+        return $this->issueService->updateSequence($issue, $data['sequence']);
+    }
 
-            $previousBoard = $issue->boardSection;
-            $targetBoardId = $request->input('board_section_id');
-            $issueSequence = $request->input('sequence');
+    public function handleMove(Issue $issue, MoveIssueRequest $request)
+    {
+        $data = $request->validated();
 
-            // Update the sequence for the previous board
-            $previousBoard->issues()->where('sequence', '>', $issue->sequence)->decrement('sequence');
+        return $this->issueService->moveIssueToBoardSection($issue, BoardSection::find($data['board_section_id']), $data['sequence']);
+    }
 
-            // Update the sequence for the target board
-            BoardSection::find($targetBoardId)
-                ->issues()
-                ->where('sequence', '>=', $issueSequence)
-                ->increment('sequence');
+    public function store(StoreIssueRequest $storeIssueRequest)
+    {
+        return $this->issueService->createIssue($storeIssueRequest->validated());
+    }
 
-            // Update the issue with the new board section and sequence
-            $issue->update([
-                'board_section_id' => $targetBoardId,
-                'sequence' => $issueSequence,
-            ]);
-
-            // $responseData = $issue->project->boardSections->map->issues->flatten(1);
-            $responseData = null;
-            $end = microtime(true);
-            $timeElapsed = $end - $start;
-            Log::info("Time elapsed: $timeElapsed seconds");
-
-            return response()->json([
-                'success' => true,
-                'data' => $responseData
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 500);
-        }
+    public function destroy(Issue $issue)
+    {
+        return $this->issueService->deleteIssue($issue);
     }
 
     public function storeSubIssue(Issue $issue, StoreSubIssueRequest $request)
     {
         $data = $request->validated();
 
-        try {
-            $this->issueService->createSubIssue($issue->id, $data);
-
-            return response()->json([
-                'success' => true
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        return $this->issueService->createSubIssue($issue->id, $data);
     }
 }

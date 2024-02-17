@@ -2,6 +2,7 @@
 import AppCard from "@/Components/AppCard.vue";
 import IssueStatusIcon from "@/Components/IssueStatusIcon.vue";
 import { IconSitemap } from "@tabler/icons-vue";
+import { computed } from "vue";
 
 const props = defineProps({
     issue: {
@@ -13,14 +14,23 @@ const props = defineProps({
         default: false,
     },
 });
+
+const backgroundClasses = computed(() => {
+    if (!props.selected) {
+        return "bg-white";
+    }
+
+    return "bg-indigo-50";
+});
 </script>
 
 <template>
     <AppCard
         borderless
         class="border handle p-4 cursor-pointer"
+        :background-classes="backgroundClasses"
         :class="{
-            'border-indigo-500': selected,
+            'border-indigo-500 ': selected,
             'border-zinc-950/10 hover:border-zinc-950/20': !selected,
         }"
         @click.stop

@@ -31,10 +31,11 @@ const deleteForm = useForm({
 });
 
 const handleDelete = () => {
-    deleteForm.post(route("issue.destroy", props.issue.id), {
-        onSuccess: () => {
-            emit("close");
-        },
+    const issueId = props.issue.id;
+
+    axios.delete(route("api.issue.destroy", issueId)).then(() => {
+        emitter.emit("issue-deleted", issueId);
+        emit("close");
     });
 };
 

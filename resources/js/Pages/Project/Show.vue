@@ -1,13 +1,14 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import BoardSection from "@/Components/BoardSection.vue";
 import ProjectSidebar from "@/Pages/Project/Partials/ProjectSidebar.vue";
-import AddBoardSection from "@/Components/AddBoardSection.vue";
-import draggable from "vuedraggable";
-import { getCurrentInstance, onMounted, provide, ref, watch } from "vue";
-import { useForm } from "@inertiajs/vue3";
-import NewIssueModal from "@/Components/NewIssueModal.vue";
+import BoardSectionsLoading from "@/Pages/Project/Partials/BoardSectionsLoading.vue";
+import BoardSection from "@/Pages/Project/Partials/BoardSection.vue";
 import axios from "axios";
+import { getCurrentInstance, onMounted, provide, ref } from "vue";
+import draggable from "vuedraggable";
+import NewIssueModal from "@/Components/NewIssueModal.vue";
+import AddBoardSection from "@/Components/AddBoardSection.vue";
+import IssueDetailsModal from "@/Components/IssueDetailsModal.vue";
 
 const props = defineProps({
     project: {
@@ -18,152 +19,164 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    boardSectionCount: {
+        type: Number,
+        required: true,
+    },
 });
 
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
-const sections = ref(props.project.board_sections);
+const boardSections = ref(null);
+const processingBoardSection = ref(null);
+const draggingElement = ref(null);
 const showNewIssueModal = ref(false);
-const selectedBoardSection = ref(null);
-const loadingIssues = ref(false);
+const selectedBoardSectionId = ref(null);
+const selectedIssue = ref(null);
+const showIssueDetails = ref(false);
 
 provide("statuses", props.statuses);
+provide("selectedIssue", selectedIssue);
 
-const handleChange = () => {
-    const form = useForm({
-        board_sections: sections.value,
-    });
+const handleStart = (event) => {
+    draggingElement.value = event.oldIndex;
+};
 
-    form.put(
-        route("board-section.sequence.update", { project: props.project.id }),
+const handleEnd = () => {
+    draggingElement.value = null;
+};
+
+const handleChange = (event) => {
+    axios.put(
+        route("api.board-section.move", {
+            boardSection: event.moved.element.id,
+        }),
         {
-            preserveScroll: true,
+            sequence: event.moved.newIndex,
         }
     );
 };
 
-const handleNewIssueModal = (boardSection) => {
-    selectedBoardSection.value = boardSection;
-    showNewIssueModal.value = true;
-};
-
-const handleHideNewIssueModal = () => {
-    selectedBoardSection.value = null;
-    showNewIssueModal.value = false;
-};
-
-const updateIssue = (issueId) => {
-    loadingIssues.value = true;
+const getBoardSections = () => {
     axios
-        .get(route("api.issue.fetch", { issue: issueId }))
+        .get(route("api.project.board-sections", { project: props.project.id }))
         .then((response) => {
-            const targetBoardId = response.data.board_section_id;
-
-            sections.value
-                .filter((section) => {
-                    return section.id === targetBoardId;
-                })
-                .map((section) => {
-                    section.issues = section.issues.map((issue) => {
-                        if (issue.id === issueId) {
-                            issue = response.data;
-                        }
-                        return issue;
-                    });
-
-                    return section;
-                });
-        })
-        .finally(() => {
-            loadingIssues.value = false;
+            boardSections.value = response.data;
         });
 };
 
-const handleIssueMovedAcross = (issueId, boardSectionId, newIndex) => {
-    loadingIssues.value = true;
+const updateIssueSequence = (issueId, boardSectionId, newIndex) => {
+    processingBoardSection.value = boardSectionId;
+
     axios
-        .put(route("api.issue.move", { issue: issueId }), {
+        .put(route("api.issue.sequence.update", { issue: issueId }), {
             board_section_id: boardSectionId,
             sequence: newIndex,
         })
-        .then((response) => {
-            // updateIssues(response.data);
-        })
-        .catch((error) => {
-            console.log(error);
-        })
         .finally(() => {
-            loadingIssues.value = false;
+            processingBoardSection.value = null;
         });
 };
 
-const handleIssueMoved = (issues) => {
-    loadingIssues.value = true;
-    axios
-        .put(route("api.issue.sequence.update"), {
-            issues: issues,
-        })
-        .then((response) => {
-            // updateIssues(response.data);
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-        .finally(() => {
-            loadingIssues.value = false;
-        });
-};
-
-const fetchProjectIssues = () => {
-    loadingIssues.value = true;
-    axios
-        .get(route("api.issue.fetch-by-project", { project: props.project.id }))
-        .then((response) => {
-            updateIssues(response.data);
-        })
-        .finally(() => {
-            loadingIssues.value = false;
-        });
-};
-
-const updateIssues = (issues) => {
-    sections.value.forEach((section) => {
-        section.issues = issues.filter(
-            (issue) => issue.board_section_id === section.id
-        );
+const handleIssueMoved = (issueId, boardSectionId, newIndex) => {
+    axios.put(route("api.issue.move", { issue: issueId }), {
+        board_section_id: boardSectionId,
+        sequence: newIndex,
     });
 };
 
-watch(
-    props,
-    (newProps) => {
-        sections.value = newProps.project.board_sections;
-    },
-    { deep: true }
-);
+const updateIssue = (issueData) => {
+    boardSections.value = boardSections.value.map((section) => {
+        if (section.id === issueData.board_section_id) {
+            section.issues = section.issues.map((issue) => {
+                if (issue.id === issueData.id) {
+                    issue = issueData;
+                }
+                return issue;
+            });
+        }
+        return section;
+    });
+};
 
-const closeSlideover = () => {
-    emitter.emit("close-slideover");
+const createIssue = (issueData) => {
+    boardSections.value = boardSections.value.map((section) => {
+        if (section.id === issueData.board_section_id) {
+            section.issues.push(issueData);
+        }
+        return section;
+    });
+};
+
+const deleteIssue = (issueId) => {
+    boardSections.value = boardSections.value.map((section) => {
+        section.issues = section.issues.filter((issue) => issue.id !== issueId);
+        return section;
+    });
+
+    console.log("deleted issue", issueId);
+
+    console.log(boardSections.value);
+};
+
+const createBoardSection = (boardSectionData) => {
+    boardSections.value.push(boardSectionData);
+};
+
+const deleteBoardSection = (boardSectionId) => {
+    boardSections.value = boardSections.value.filter(
+        (section) => section.id !== boardSectionId
+    );
 };
 
 onMounted(() => {
-    emitter.on("update-issue", (issueId) => {
-        updateIssue(issueId);
+    getBoardSections();
+
+    emitter.on("issue-updated", (issueData) => {
+        updateIssue(issueData);
     });
 
-    emitter.on("update-issues", () => {
-        fetchProjectIssues();
+    emitter.on("issue-created", (issueData) => {
+        createIssue(issueData);
+    });
+
+    emitter.on("issue-deleted", (issueId) => {
+        deleteIssue(issueId);
+    });
+
+    emitter.on("board-section-created", (boardSectionData) => {
+        createBoardSection(boardSectionData);
+    });
+
+    emitter.on("board-section-deleted", (boardSectionId) => {
+        deleteBoardSection(boardSectionId);
+    });
+
+    emitter.on("issue-moved", (data) => {
+        updateIssueSequence(data.issueId, data.boardSectionId, data.newIndex);
     });
 
     emitter.on("issue-moved-across", (data) => {
-        handleIssueMovedAcross(
-            data.issueId,
-            data.boardSectionId,
-            data.newIndex
-        );
+        handleIssueMoved(data.issueId, data.boardSectionId, data.newIndex);
     });
 
-    emitter.on("issue-sequence-updated", (issueId) => {
-        handleIssueMoved(issueId);
+    emitter.on("show-new-issue-modal", (boardSectionId) => {
+        selectedBoardSectionId.value = boardSectionId;
+        showNewIssueModal.value = true;
+    });
+
+    emitter.on("close-new-issue-modal", () => {
+        selectedBoardSectionId.value = null;
+        showNewIssueModal.value = false;
+    });
+
+    emitter.on("show-issue-details", (issue) => {
+        selectedIssue.value = issue;
+        showIssueDetails.value = true;
+    });
+
+    emitter.on("close-issue-details", () => {
+        selectedIssue.value = null;
+        showIssueDetails.value = false;
     });
 });
 </script>
@@ -178,38 +191,63 @@ onMounted(() => {
             >
                 <h2 class="text-3xl font-semibold mb-6">Board</h2>
 
-                <div
-                    class="flex-1 flex flex-nowrap space-x-3 overflow-x-scroll"
-                    :class="{
-                        'opacity-50 pointer-events-none': loadingIssues,
-                    }"
+                <transition
+                    enter-active-class="transition ease-in-out duration-300"
+                    enter-from-class="opacity-0"
+                    enter-to-class="opacity-100"
+                    leave-active-class="transition ease-in-out duration-300"
+                    leave-from-class="opacity-100"
+                    leave-to-class="opacity-0"
+                    mode="out-in"
                 >
-                    <draggable
-                        v-model="sections"
-                        group="sections"
-                        @change="handleChange"
-                        item-key="id"
-                        handle=".handle"
-                        ghost-class="ghost"
-                        class="flex flex-nowrap space-x-3"
+                    <BoardSectionsLoading
+                        v-if="!boardSections"
+                        :board-section-count="boardSectionCount"
+                    />
+
+                    <div
+                        class="flex-1 flex flex-nowrap overflow-x-scroll space-x-3"
+                        v-else
                     >
-                        <template #item="{ element }">
-                            <BoardSection
-                                :project-id="project.id"
-                                :section="element"
-                                @new-issue="handleNewIssueModal"
-                            />
-                        </template>
-                    </draggable>
-                    <AddBoardSection :project="project" />
-                </div>
+                        <draggable
+                            :list="boardSections"
+                            group="sections"
+                            @change="handleChange"
+                            @start="handleStart"
+                            @end="handleEnd"
+                            item-key="id"
+                            :force-fallback="true"
+                            handle=".handle"
+                            ghost-class="ghost"
+                            class="flex flex-nowrap space-x-3"
+                        >
+                            <template #item="{ element, index }">
+                                <BoardSection
+                                    :section="element"
+                                    :dragging="draggingElement === index"
+                                    :processing="
+                                        processingBoardSection === element.id
+                                    "
+                                />
+                            </template>
+                        </draggable>
+
+                        <AddBoardSection :project="project" />
+                    </div>
+                </transition>
             </div>
         </div>
 
         <NewIssueModal
             :show="showNewIssueModal"
-            @close="handleHideNewIssueModal"
-            :boardSection="selectedBoardSection"
+            :board-section-id="selectedBoardSectionId"
+            @close="emitter.emit('close-new-issue-modal')"
+        />
+
+        <IssueDetailsModal
+            :show="showIssueDetails"
+            :issue="selectedIssue"
+            @close="emitter.emit('close-issue-details')"
         />
     </AppLayout>
 </template>

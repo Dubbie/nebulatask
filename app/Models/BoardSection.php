@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class BoardSection extends Model
 {
@@ -18,6 +19,15 @@ class BoardSection extends Model
 
     public function issues()
     {
-        return $this->hasMany(Issue::class)->orderBy('sequence');
+        return $this->hasMany(Issue::class)->rootIssues()->orderBy('sequence');
+    }
+
+    protected static function booted()
+    {
+        static::deleted(function (BoardSection $boardSection) {
+            // Reorder existing boards
+            Log::info("Reordering board sections for project {$boardSection->project_id}");
+            $boardSection->project->boardSections()->where('sequence', '>=', $boardSection->sequence)->decrement('sequence');
+        });
     }
 }

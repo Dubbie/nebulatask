@@ -3,15 +3,7 @@ import { IconDots, IconPlus } from "@tabler/icons-vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import AppButton from "@/Components/AppButton.vue";
 import Dropdown from "@/Components/Dropdown.vue";
-import {
-    computed,
-    getCurrentInstance,
-    reactive,
-    ref,
-    toRef,
-    toRefs,
-    watch,
-} from "vue";
+import { computed, getCurrentInstance, ref, watch } from "vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import { useForm } from "@inertiajs/vue3";
 import IssueCard from "@/Components/IssueCard.vue";
@@ -35,11 +27,11 @@ const deleteSectionForm = useForm({
     _method: "DELETE",
 });
 const issues = ref(props.section.issues);
-const rootIssues = computed(() => {
-    return issues.value.filter((issue) => {
+const rootIssues = ref(
+    issues.value.filter((issue) => {
         return issue.parent_issue_id === null;
-    });
-});
+    })
+);
 const showIssueDetailsModal = ref(false);
 const selectedIssue = ref(null);
 const handleHover = ref(false);
@@ -97,6 +89,8 @@ watch(
     () => props.section.issues,
     (newIssues) => {
         issues.value = newIssues;
+
+        console.log(issues.value);
 
         if (selectedIssue.value) {
             const foundIssue = newIssues.find((issue) => {
