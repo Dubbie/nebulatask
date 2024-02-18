@@ -41,7 +41,7 @@ const handleStart = (event) => {
     draggingElement.value = event.oldIndex;
 };
 
-const handleEnd = () => {
+const handleEnd = (event) => {
     draggingElement.value = null;
 };
 
@@ -126,6 +126,23 @@ const deleteBoardSection = (boardSectionId) => {
     boardSections.value = boardSections.value.filter(
         (section) => section.id !== boardSectionId
     );
+
+    // Check if selected issue is in the deleted section
+    if (selectedIssue.value.board_section_id === boardSectionId) {
+        emitter.emit("close-issue-details");
+        selectedIssue.value = null;
+    }
+};
+
+const handleClickEvent = (event) => {
+    console.log(event);
+    const clicked = document.elementFromPoint(event.clientX, event.clientY);
+
+    // Find the closest .handle element
+    const handle = clicked.closest(".handle");
+    if (handle) {
+        event.stopPropagation();
+    }
 };
 
 onMounted(() => {
@@ -188,6 +205,7 @@ onMounted(() => {
 
             <div
                 class="col-span-9 lg:col-span-9 xl:col-span-10 bg-white py-8 px-4 sm:px-6 lg:px-8 flex flex-col"
+                @click="emitter.emit('stop-editing')"
             >
                 <h2 class="text-3xl font-semibold mb-6">Board</h2>
 
@@ -216,13 +234,19 @@ onMounted(() => {
                             @start="handleStart"
                             @end="handleEnd"
                             item-key="id"
+                            :remove-clone-on-hide="true"
                             :force-fallback="true"
                             handle=".handle"
                             ghost-class="ghost"
                             class="flex flex-nowrap space-x-3"
+                            @click="handleClickEvent"
                         >
                             <template #item="{ element, index }">
                                 <BoardSection
+                                    :class="{
+                                        'pointer-events-none':
+                                            draggingElement === index,
+                                    }"
                                     :section="element"
                                     :dragging="draggingElement === index"
                                     :processing="

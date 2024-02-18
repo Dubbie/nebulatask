@@ -165,6 +165,7 @@ onMounted(() => {
                 @start="handleStart"
                 @end="handleEnd"
                 @move="checkChildren"
+                @click.stop
             >
                 <template #item="{ element, index }">
                     <BoardSectionIssue
@@ -175,7 +176,9 @@ onMounted(() => {
                         }"
                         :issue="element"
                         :dragging="draggingElement === index"
-                        @click="emitter.emit('show-issue-details', element)"
+                        @click.stop="
+                            emitter.emit('show-issue-details', element)
+                        "
                     />
                 </template>
             </draggable>

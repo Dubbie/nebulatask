@@ -34,7 +34,7 @@ const emit = defineEmits(["newIssue", "highlight", "deleteSection"]);
             <AppButton size="sm" plain square @click="$emit('newIssue')">
                 <IconPlus class="text-zinc-500" :size="16" />
             </AppButton>
-            <Dropdown>
+            <Dropdown @click.stop>
                 <template #trigger>
                     <AppButton size="sm" plain square>
                         <IconDots class="text-zinc-500" :size="16" />

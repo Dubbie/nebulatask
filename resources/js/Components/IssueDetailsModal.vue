@@ -1,7 +1,7 @@
 <script setup>
 import AppButton from "@/Components/AppButton.vue";
 import { IconTrashFilled } from "@tabler/icons-vue";
-import { getCurrentInstance, provide, ref, watch } from "vue";
+import { getCurrentInstance, onMounted, provide, ref, watch } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import IssueTitle from "@/Components/IssueTitle.vue";
 import SubIssues from "@/Components/SubIssues.vue";
@@ -64,6 +64,11 @@ watch(
     },
     { deep: true }
 );
+onMounted(() => {
+    emitter.on("stop-editing", () => {
+        handleClosing();
+    });
+});
 </script>
 
 <template>
