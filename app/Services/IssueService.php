@@ -98,18 +98,21 @@ class IssueService
         }
     }
 
-    /**
-     * Create a sub-issue for a given parent issue.
-     *
-     * @param int $parentIssueId
-     * @param array $data
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function createSubIssue(int $parentIssueId, array $data)
+    public function createSubIssue(Issue $issue, string $title)
     {
         try {
-            $subIssue = tap(Issue::createSubIssue($parentIssueId, $this->prepareIssueData($data)))->load('status', 'assignee');
-            return $this->successResponse($subIssue);
+            $issue->subIssues()->create([
+                'title' => $title,
+                'issue_status_id' => self::STATUS_INCOMPLETE,
+                'board_section_id' => $issue->board_section_id,
+                'sequence' => $issue->subIssues()->max('sequence') + 1,
+                'parent_issue_id' => $issue->id,
+                'user_id' => $issue->user_id,
+            ]);
+
+            $issue->refresh();
+
+            return $this->successResponse($issue);
         } catch (Exception $exception) {
             return $this->errorResponse($exception, 500);
         }

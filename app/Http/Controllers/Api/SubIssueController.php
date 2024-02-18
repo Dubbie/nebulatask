@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreSubIssueRequest;
 use App\Models\Issue;
 use App\Services\IssueService;
+use Illuminate\Support\Facades\Log;
 
 class SubIssueController extends Controller
 {
@@ -34,5 +36,11 @@ class SubIssueController extends Controller
     public function toggleComplete(Issue $subIssue)
     {
         return $this->issueService->toggleComplete($subIssue);
+    }
+
+    public function store(Issue $issue, StoreSubIssueRequest $request)
+    {
+        $data = $request->validated();
+        return $this->issueService->createSubIssue($issue, $data['title']);
     }
 }

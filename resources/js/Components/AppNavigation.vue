@@ -35,8 +35,6 @@ const switchToTeam = (team) => {
 const logout = () => {
     router.post(route("logout"));
 };
-
-console.log(usePage().props.recent_projects);
 </script>
 
 <template>
@@ -311,7 +309,7 @@ console.log(usePage().props.recent_projects);
                                     API Tokens
                                 </DropdownLink>
 
-                                <div class="border-t border-gray-200" />
+                                <div class="border-t border-gray-200 my-1" />
 
                                 <!-- Authentication -->
                                 <form @submit.prevent="logout">

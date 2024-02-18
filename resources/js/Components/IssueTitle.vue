@@ -32,7 +32,7 @@ const updateTitle = () => {
             title: title.value,
         })
         .then((response) => {
-            emitter.emit("update-issue", issue.value.id);
+            emitter.emit("issue-updated", response.data.data);
             reset(title.value);
         })
         .catch((error) => {

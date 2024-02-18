@@ -96,6 +96,10 @@ const updateIssue = (issueData) => {
         }
         return section;
     });
+
+    if (selectedIssue.value.id === issueData.id) {
+        selectedIssue.value = issueData;
+    }
 };
 
 const createIssue = (issueData) => {

@@ -26,10 +26,12 @@ const handleNewIssue = () => {
     savingSubIssue.value = true;
     axios
         .post(
-            route("api.issue.sub-issue.store", { issue: issue.value.id }),
+            route("api.sub-issue.store", { issue: issue.value.id }),
             newIssueForm.data()
         )
-        .then((response) => {})
+        .then((response) => {
+            emitter.emit("issue-updated", response.data.data);
+        })
         .catch((error) => {
             console.log(error);
         })

@@ -56,6 +56,7 @@ Route::middleware([
     Route::put('/api/issue/{issue}/update-sequence', [IssueApiController::class, 'handleUpdateSequence'])->name('api.issue.sequence.update');
     Route::post('/api/issue/store', [IssueApiController::class, 'store'])->name('api.issue.store');
 
+    Route::post('/api/issue/{issue}/sub-issue/store', [SubIssueController::class, 'store'])->name('api.sub-issue.store');
     Route::delete('/api/sub-issue/{subIssue}/destroy', [SubIssueController::class, 'destroy'])->name('api.sub-issue.destroy');
     Route::put('/api/sub-issue/{subIssue}/complete/toggle', [SubIssueController::class, 'toggleComplete'])->name('api.sub-issue.complete.toggle');
 

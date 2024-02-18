@@ -61,9 +61,18 @@ class IssueController extends Controller
 
         try {
             $issue->update(['title' => $request->input('title')]);
-            return response()->json($issue);
+            return response()->json([
+                'success' => true,
+                'data' => $issue,
+                'message' => 'Issue updated successfully',
+            ]);
         } catch (Exception $e) {
-            return response()->json($e->getMessage(), 500);
+            Log::error($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -75,22 +84,6 @@ class IssueController extends Controller
     public function fetch(Issue $issue)
     {
         return response()->json($issue);
-    }
-
-    public function updateSequence(UpdateIssuesSequenceRequest $request)
-    {
-        try {
-            $this->issueService->updateSequence($request->validated('issues'));
-
-            return response()->json([
-                'success' => true
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 500);
-        }
     }
 
     public function handleUpdateSequence(Issue $issue, UpdateIssueSequenceRequest $request)
