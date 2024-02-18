@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -38,6 +40,30 @@ class HandleInertiaRequests extends Middleware
     {
         return array_merge(parent::share($request), [
             'tiny_api_key' => config('tiny.api_key'),
+            'recent_projects' => fn () => $this->getRecentProjects(),
         ]);
+    }
+
+    /**
+     * Get recent projects.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    protected function getRecentProjects()
+    {
+        // $projects will be an array of project IDs
+        $projects = Session::get('recents', []);
+        if ($projects) {
+            // Check if any project is not in the DB, that means it was deleted
+            $deletedProjects = array_diff($projects, Project::pluck('id')->toArray());
+            if (!empty($deletedProjects)) {
+                // Remove from session
+                $projects = array_diff($projects, $deletedProjects);
+                Session::put('recents', $projects);
+            }
+
+            // Return projects
+            return Project::whereIn('id', $projects)->get(['id', 'name'])->makeHidden('lead')->toArray();
+        }
     }
 }

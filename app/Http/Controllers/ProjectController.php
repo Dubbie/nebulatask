@@ -8,6 +8,7 @@ use App\Models\Project;
 use App\Services\ProjectService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -35,13 +36,20 @@ class ProjectController extends Controller
             $data['code'],
             $data['description'] ?? null,
             Auth::user()->id
-        );
+        )->getData(true);
 
-        return redirect()->back();
+        return redirect()->route('project.show', ['project' => $response['data']['id']]);
     }
 
     public function show(Project $project)
     {
+        // Save to recents
+        $recents = Session::get('recents', []);
+        if (!in_array($project->id, $recents)) {
+            $recents[] = $project->id;
+            Session::put('recents', $recents);
+        }
+
         return Inertia::render('Project/Show', [
             'project' => $project,
             'statuses' => IssueStatus::all(),

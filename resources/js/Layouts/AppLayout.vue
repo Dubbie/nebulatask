@@ -3,6 +3,7 @@ import { Head } from "@inertiajs/vue3";
 import Banner from "@/Components/Banner.vue";
 import AppContainer from "@/Components/AppContainer.vue";
 import AppNavigation from "@/Components/AppNavigation.vue";
+import NewProject from "@/Components/NewProject.vue";
 
 defineProps({
     title: String,
@@ -43,5 +44,7 @@ defineProps({
                 </component>
             </main>
         </div>
+
+        <NewProject />
     </div>
 </template>

@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from "vue";
-import { router } from "@inertiajs/vue3";
+import { getCurrentInstance, ref } from "vue";
+import { router, usePage } from "@inertiajs/vue3";
 import ApplicationMark from "@/Components/ApplicationMark.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
@@ -18,6 +18,7 @@ const props = defineProps({
 });
 
 const showingNavigationDropdown = ref(false);
+const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 
 const switchToTeam = (team) => {
     router.put(
@@ -34,6 +35,8 @@ const switchToTeam = (team) => {
 const logout = () => {
     router.post(route("logout"));
 };
+
+console.log(usePage().props.recent_projects);
 </script>
 
 <template>
@@ -55,7 +58,9 @@ const logout = () => {
                     </div>
 
                     <!-- Navigation Links -->
-                    <div class="hidden space-x-4 sm:-my-px sm:ms-10 sm:flex">
+                    <div
+                        class="hidden space-x-4 sm:-my-px sm:ms-10 sm:flex sm:items-center"
+                    >
                         <NavLink
                             :href="route('dashboard')"
                             :active="route().current('dashboard')"
@@ -68,23 +73,43 @@ const logout = () => {
                             </template>
 
                             <template #content>
-                                <!-- <p class="px-2 py-1">Recent projects</p>
-                                <div class="space-y-1">
-                                    <PopoverLink title="Project 1" />
-                                    <PopoverLink title="Project 2" />
-                                    <PopoverLink title="Project 3" />
-                                </div>
-                                <hr class="my-3" /> -->
-                                <!-- <PopoverLink
-                                    :href="route('project.index')"
-                                    title="All projects"
-                                /> -->
+                                <template
+                                    v-if="
+                                        $page.props.recent_projects.length > 0
+                                    "
+                                >
+                                    <p
+                                        class="text-zinc-500 font-medium text-xs px-2 py-1"
+                                    >
+                                        Recent projects
+                                    </p>
+                                    <div class="space-y-1">
+                                        <PopoverLink
+                                            v-for="project in $page.props
+                                                .recent_projects"
+                                            :title="project.name"
+                                            :href="
+                                                route('project.show', project)
+                                            "
+                                        />
+                                    </div>
+                                    <hr class="my-3" />
+                                </template>
                                 <Link
                                     :href="route('project.index')"
-                                    class="text-zinc-500 hover:text-zinc-950"
+                                    class="block text-sm font-medium p-1 text-zinc-500 hover:text-zinc-950"
                                 >
                                     <p>All projects</p>
                                 </Link>
+                                <button
+                                    class="block text-sm font-medium p-1 text-left w-full text-zinc-500 hover:text-zinc-950"
+                                    type="button"
+                                    @click="
+                                        emitter.emit('show-new-project-modal')
+                                    "
+                                >
+                                    New project
+                                </button>
                             </template>
                         </NavLinkPopover>
                     </div>

@@ -17,7 +17,10 @@ class ProjectService
                 'user_id' => $userId
             ]);
 
-            return response()->json($project, 201);
+            return response()->json([
+                'success' => true,
+                'data' => $project
+            ], 201);
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }

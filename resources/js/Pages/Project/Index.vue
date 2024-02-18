@@ -4,7 +4,7 @@ import AppButton from "@/Components/AppButton.vue";
 import NewProjectModal from "@/Components/NewProjectModal.vue";
 import ProjectsList from "@/Pages/Project/Partials/ProjectsList.vue";
 import ConfirmDeleteProjectModal from "@/Pages/Project/Partials/ConfirmDeleteProjectModal.vue";
-import { ref } from "vue";
+import { ref, getCurrentInstance } from "vue";
 
 const props = defineProps({
     projects: {
@@ -12,8 +12,7 @@ const props = defineProps({
         required: true,
     },
 });
-
-const showNewProjectModal = ref(false);
+const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const showConfirmModal = ref(false);
 const selectedProject = ref(null);
 
@@ -41,7 +40,9 @@ const handleCancelConfirmModal = () => {
                 </div>
 
                 <div>
-                    <AppButton color="blue" @click="showNewProjectModal = true"
+                    <AppButton
+                        color="blue"
+                        @click="emitter.emit('show-new-project-modal')"
                         >New project</AppButton
                     >
                 </div>
@@ -51,11 +52,6 @@ const handleCancelConfirmModal = () => {
         <ProjectsList
             :projects="projects"
             @delete-project="handleShowConfirmModal"
-        />
-
-        <NewProjectModal
-            :show="showNewProjectModal"
-            @close="showNewProjectModal = false"
         />
 
         <ConfirmDeleteProjectModal
