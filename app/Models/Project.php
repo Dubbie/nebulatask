@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\GeneratesProjectIdTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    use HasFactory;
+    use HasFactory, GeneratesProjectIdTrait;
+
+    public $incrementing = false;
 
     protected $fillable = [
         'name',
@@ -28,5 +31,10 @@ class Project extends Model
     public function boardSections()
     {
         return $this->hasMany(BoardSection::class)->orderBy('sequence');
+    }
+
+    public function issues()
+    {
+        return $this->hasManyThrough(Issue::class, BoardSection::class);
     }
 }

@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('board_sections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
+            $table->string('project_id');
+            $table->foreign('project_id')->references('id')->on('projects')->cascadeOnDelete();
             $table->string('name');
             $table->unsignedTinyInteger('sequence')->default(0)->index();
             $table->boolean('is_collapsed')->default(false);

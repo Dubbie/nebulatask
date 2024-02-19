@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\GeneratesIssueIdTrait;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,9 @@ use Illuminate\Support\Facades\Log;
 
 class Issue extends Model
 {
-    use HasFactory;
+    use HasFactory, GeneratesIssueIdTrait;
+
+    public $incrementing = false;
 
     protected $fillable = [
         'title',
@@ -29,20 +32,10 @@ class Issue extends Model
     ];
 
     protected $appends = [
-        'code',
         'type',
         'status',
         'is_complete'
     ];
-
-    protected function code(): Attribute
-    {
-        $code = $this->project->code;
-
-        return Attribute::make(
-            get: fn () => $code . '-' . $this->id
-        );
-    }
 
     protected function type(): Attribute
     {

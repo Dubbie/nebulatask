@@ -92,7 +92,7 @@ onMounted(() => {
                         <IssueTypeIcon :type="issue.type" size-class="size-4" />
 
                         <p class="text-sm font-semibold text-zinc-400">
-                            {{ issue.code }}
+                            {{ issue.id }}
                         </p>
                     </div>
                 </div>

@@ -54,9 +54,11 @@ class BoardSectionService
     public function create(Project $project, string $name)
     {
         try {
+            $nextInSequence = $project->boardSections()->count() > 0 ? $project->boardSections()->max('sequence') + 1 : 0;
+
             $boardSection = $project->boardSections()->create([
                 'name' => $name,
-                'sequence' => $project->boardSections()->max('sequence') + 1
+                'sequence' => $nextInSequence
             ])->load('issues');
 
             $this->updateBoardTypes($boardSection->project);

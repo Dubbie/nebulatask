@@ -53,7 +53,7 @@ const selected = computed(() => props.issue.id === selectedIssue.value?.id);
         <div class="flex items-center space-x-2">
             <IssueTypeIcon size-class="size-3" :type="issue.type" />
             <p class="text-xs font-semibold text-zinc-400 flex-1">
-                {{ issue.code }}
+                {{ issue.id }}
             </p>
 
             <img
