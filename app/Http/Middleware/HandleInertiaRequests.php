@@ -65,5 +65,7 @@ class HandleInertiaRequests extends Middleware
             // Return projects
             return Project::whereIn('id', $projects)->get(['id', 'name'])->makeHidden('lead')->toArray();
         }
+
+        return [];
     }
 }
