@@ -24,6 +24,7 @@ const props = defineProps({
     },
 });
 
+const processing = ref(false);
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const preToggle = ref(false);
 const completed = computed(() => {
@@ -33,12 +34,16 @@ const completed = computed(() => {
 
 const deleteSubIssue = () => {
     if (confirm("Are you sure you want to delete this sub-issue?")) {
+        processing.value = true;
         axios
             .delete(
                 route("api.sub-issue.destroy", { subIssue: props.subIssue.id })
             )
             .then((response) => {
                 emitter.emit("issue-updated", response.data.data);
+            })
+            .finally(() => {
+                processing.value = false;
             });
     }
 };
@@ -75,7 +80,12 @@ watch(
 );
 </script>
 <template>
-    <div class="-ml-6 group/item flex space-x-1 items-center">
+    <div
+        class="-ml-6 group/item flex space-x-1 items-center"
+        :class="{
+            'pointer-events-none opacity-50': processing,
+        }"
+    >
         <div
             class="handle opacity-0"
             :class="{
