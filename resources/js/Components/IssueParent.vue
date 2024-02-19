@@ -24,7 +24,7 @@ const handleShowParent = () => {
                 <div>
                     <p class="font-medium">{{ issue.parent.title }}</p>
                     <p class="text-xs font-semibold text-zinc-400">
-                        {{ issue.parent.code }}
+                        {{ issue.parent.id }}
                     </p>
                 </div>
 
