@@ -25,6 +25,7 @@ class Issue extends Model
     protected $with = [
         'assignee',
         'subIssues',
+        'parent'
     ];
 
     protected $appends = [
@@ -77,6 +78,11 @@ class Issue extends Model
     public function boardSection()
     {
         return $this->belongsTo(BoardSection::class, 'board_section_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Issue::class, 'parent_issue_id')->without('subIssues');
     }
 
     public function project()

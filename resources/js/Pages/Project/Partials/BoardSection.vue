@@ -177,7 +177,7 @@ onMounted(() => {
                         :issue="element"
                         :dragging="draggingElement === index"
                         @click.stop="
-                            emitter.emit('show-issue-details', element)
+                            emitter.emit('show-issue-details', element.id)
                         "
                     />
                 </template>

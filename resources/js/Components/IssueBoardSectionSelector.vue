@@ -26,8 +26,6 @@ const updateBoardSection = (newBoardSection) => {
 watch(
     issue,
     (newIssue) => {
-        console.log("Updated");
-        console.log(newIssue);
         boardSection.value = newIssue ? newIssue.board_section_id : null;
     },
     {

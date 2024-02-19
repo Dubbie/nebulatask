@@ -114,10 +114,20 @@ const updateIssue = (issueData, newIndex) => {
         return section;
     });
 
-    sortIssues();
-
+    // Update selectedIssue if it matches the issueData
     if (selectedIssue.value && selectedIssue.value.id === issueData.id) {
         selectedIssue.value = issueData;
+    }
+
+    // Update selectedIssue if it is a sub issue of the updated issue
+    if (
+        selectedIssue.value &&
+        selectedIssue.value.parent &&
+        selectedIssue.value.parent.id === issueData.id
+    ) {
+        selectedIssue.value = issueData.sub_issues.find(
+            (issue) => issue.id === selectedIssue.value.id
+        );
     }
 };
 
@@ -135,8 +145,6 @@ const deleteIssue = (issueId) => {
         section.issues = section.issues.filter((issue) => issue.id !== issueId);
         return section;
     });
-
-    sortIssues();
 };
 
 const createBoardSection = (boardSectionData) => {
@@ -168,10 +176,30 @@ const handleClickEvent = (event) => {
     }
 };
 
-const sortIssues = () => {
-    boardSectionsReactive.value.forEach((section) => {
-        section.issues.sort((a, b) => a.sequence - b.sequence);
-    });
+const findIssueById = (issueId) => {
+    for (const section of boardSectionsReactive.value) {
+        const foundIssue = findIssueInIssues(section.issues, issueId);
+        if (foundIssue) {
+            return foundIssue;
+        }
+    }
+    return null;
+};
+
+const findIssueInIssues = (issues, issueId) => {
+    const topLevelIssue = issues.find((issue) => issue.id === issueId);
+    if (topLevelIssue) {
+        return topLevelIssue;
+    }
+
+    for (const issue of issues) {
+        const foundIssue = findIssueInIssues(issue.sub_issues || [], issueId);
+        if (foundIssue) {
+            return foundIssue;
+        }
+    }
+
+    return null;
 };
 
 onMounted(() => {
@@ -215,8 +243,8 @@ onMounted(() => {
         showNewIssueModal.value = false;
     });
 
-    emitter.on("show-issue-details", (issue) => {
-        selectedIssue.value = issue;
+    emitter.on("show-issue-details", (issueId) => {
+        selectedIssue.value = findIssueById(issueId);
         showIssueDetails.value = true;
     });
 

@@ -23,25 +23,26 @@ const props = defineProps({
 });
 
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
-const showActions = ref(false);
 const preToggle = ref(false);
 const completed = computed(() => {
-    console.log(props.subIssue);
     const isComplete = props.subIssue.is_complete;
     return preToggle.value ? !isComplete : isComplete;
 });
 
 const deleteSubIssue = () => {
-    const parentIssueId = props.subIssue.parent_issue_id;
     if (confirm("Are you sure you want to delete this sub-issue?")) {
         axios
             .delete(
                 route("api.sub-issue.destroy", { subIssue: props.subIssue.id })
             )
             .then((response) => {
-                emitter.emit("update-issue", parentIssueId);
+                emitter.emit("issue-updated", response.data.data);
             });
     }
+};
+
+const handleShowSubIssue = () => {
+    emitter.emit("show-issue-details", props.subIssue.id);
 };
 
 const toggleComplete = () => {
@@ -61,11 +62,15 @@ const toggleComplete = () => {
         });
 };
 
-watch(props, (newProps) => {
-    if (newProps.subIssue) {
-        preToggle.value = false;
-    }
-});
+watch(
+    () => props.subIssue,
+    (newSubIssue) => {
+        if (newSubIssue) {
+            preToggle.value = false;
+        }
+    },
+    { immediate: true, deep: true }
+);
 </script>
 <template>
     <div class="-ml-6 group/item flex space-x-1 items-center">
@@ -99,15 +104,14 @@ watch(props, (newProps) => {
                 </div>
 
                 <p
-                    class="flex-1 font-semibold"
+                    class="flex-1 text-sm font-semibold"
                     :class="{ 'line-through text-zinc-300': completed }"
                 >
                     {{ subIssue.title }}
                 </p>
 
                 <div
-                    class="opacity-0 flex items-center space-x-2"
-                    :class="{ 'opacity-100': showActions }"
+                    class="opacity-0 flex items-center space-x-2 group-hover/item:opacity-100"
                 >
                     <!-- <img
                 :src="subIssue.assignee.profile_photo_url"
@@ -128,6 +132,13 @@ watch(props, (newProps) => {
                         </template>
 
                         <template #content>
+                            <DropdownLink
+                                as="button"
+                                class="text-sm"
+                                @click="handleShowSubIssue"
+                            >
+                                Show details
+                            </DropdownLink>
                             <DropdownLink
                                 as="button"
                                 class="text-sm"

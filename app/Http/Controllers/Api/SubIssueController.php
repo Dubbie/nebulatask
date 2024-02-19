@@ -20,10 +20,13 @@ class SubIssueController extends Controller
     public function destroy(Issue $subIssue)
     {
         try {
+            $parentId = $subIssue->parent_issue_id;
             $subIssue->delete();
 
+            $parent = Issue::find($parentId);
             return response()->json([
-                'success' => true
+                'success' => true,
+                'data' => $parent
             ]);
         } catch (\Exception $exception) {
             return response()->json([

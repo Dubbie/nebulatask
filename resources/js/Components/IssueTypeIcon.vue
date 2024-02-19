@@ -1,5 +1,6 @@
 <script setup>
 import { IconCopyCheck } from "@tabler/icons-vue";
+import { IconLayersIntersect } from "@tabler/icons-vue";
 import { IconCheck } from "@tabler/icons-vue";
 import { computed } from "vue";
 
@@ -30,12 +31,12 @@ const colorClasses = computed(() => {
     >
         <IconCheck
             :class="sizeClass"
-            :stroke-width="3"
+            :stroke-width="2"
             v-if="type === 'ISSUE'"
         />
-        <IconCopyCheck
+        <IconLayersIntersect
             :class="sizeClass"
-            :stroke-width="3"
+            :stroke-width="2"
             v-if="type === 'SUB_ISSUE'"
         />
     </div>

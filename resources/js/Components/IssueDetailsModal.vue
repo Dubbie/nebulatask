@@ -10,6 +10,8 @@ import IssueDescription from "@/Components/IssueDescription.vue";
 import IssueBoardSectionSelector from "@/Components/IssueBoardSectionSelector.vue";
 import IssueAssigneeChooser from "@/Components/IssueAssigneeChooser.vue";
 import IssueDueChooser from "@/Components/IssueDueChooser.vue";
+import IssueTypeIcon from "@/Components/IssueTypeIcon.vue";
+import IssueParent from "@/Components/IssueParent.vue";
 
 const props = defineProps({
     show: {
@@ -84,11 +86,15 @@ onMounted(() => {
                 <div class="flex-1">
                     <IssueTitle @click.stop />
 
-                    <p class="text-sm font-semibold text-zinc-400 mt-1 mb-2">
-                        {{ issue.code }}
-                    </p>
+                    <div class="flex items-center space-x-2 mt-1 mb-2">
+                        <IssueBoardSectionSelector />
 
-                    <IssueBoardSectionSelector />
+                        <IssueTypeIcon :type="issue.type" size-class="size-4" />
+
+                        <p class="text-sm font-semibold text-zinc-400">
+                            {{ issue.code }}
+                        </p>
+                    </div>
                 </div>
 
                 <div class="flex items-center space-x-2">
@@ -143,6 +149,7 @@ onMounted(() => {
             <div class="space-y-3">
                 <IssueAssigneeChooser />
                 <IssueDueChooser />
+                <IssueParent v-if="issue.parent" />
             </div>
 
             <p class="text-sm text-zinc-500 py-3 leading-8">Description</p>

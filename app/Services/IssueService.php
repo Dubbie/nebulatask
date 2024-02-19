@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\BoardSection;
 use App\Models\Issue;
 use Exception;
+use PhpParser\Node\Expr\Isset_;
 
 class IssueService extends ApiService
 {
@@ -99,7 +100,7 @@ class IssueService extends ApiService
         try {
             $issue->subIssues()->create([
                 'title' => $title,
-                'board_section_id' => $issue->board_section_id,
+                'board_section_id' => $issue->project->boardSections()->type('BACKLOG')->first()->id,
                 'sequence' => $issue->subIssues()->max('sequence') + 1,
                 'parent_issue_id' => $issue->id,
                 'user_id' => $issue->user_id,
@@ -131,7 +132,7 @@ class IssueService extends ApiService
                 $issue->update(['board_section_id' => $doneBoardSection->id]);
             }
 
-            return $this->successResponse($issue);
+            return $this->successResponse(Issue::find($issue->parent_issue_id));
         } catch (Exception $exception) {
             return $this->errorResponse($exception, 500);
         }
