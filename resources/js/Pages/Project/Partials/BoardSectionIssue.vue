@@ -21,14 +21,14 @@ const selected = computed(() => props.issue.id === selectedIssue.value?.id);
 
 <template>
     <AppCard
-        class="draggable relative border p-4"
+        class="draggable relative p-4"
         borderless
         :class="{
-            'cursor-grabbing border-transparent mb-3': dragging,
+            'cursor-grabbing ring-transparent mb-3': dragging,
             'cursor-pointer ': !dragging,
-            'border-zinc-950/10 hover:border-zinc-950/25':
-                !selected && !dragging,
-            'border-indigo-500 bg-indigo-100/50': selected,
+            'ring-zinc-950/10 hover:ring-zinc-950/25': !selected && !dragging,
+            'ring-1': !selected,
+            'ring-2 ring-indigo-500 bg-indigo-100/80': selected,
         }"
     >
         <div
