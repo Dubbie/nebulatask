@@ -5,13 +5,9 @@ namespace App\Services;
 use App\Models\BoardSection;
 use App\Models\Issue;
 use Exception;
-use Illuminate\Support\Facades\Log;
 
-class IssueService
+class IssueService extends ApiService
 {
-    const STATUS_INCOMPLETE = 1;
-    const STATUS_COMPLETE = 4;
-
     /**
      * Create a new issue.
      *
@@ -21,7 +17,7 @@ class IssueService
     public function createIssue(array $data)
     {
         try {
-            $issue = tap(Issue::create($this->prepareIssueData($data)))->load('status', 'assignee', 'subIssues');
+            $issue = tap(Issue::create($this->prepareIssueData($data)))->load('assignee', 'subIssues');
             return $this->successResponse($issue);
         } catch (Exception $exception) {
             return $this->errorResponse($exception);
@@ -80,7 +76,7 @@ class IssueService
         try {
             $originalPosition = $issue->sequence;
 
-            // Move the issue to the new board section
+            // Adjust sequence within the new board section
             $boardSection->issues()->rootIssues()->where('sequence', '>=', $sequence)->increment('sequence');
 
             // Adjust sequence within the original board section
@@ -92,7 +88,7 @@ class IssueService
                 'sequence' => $sequence,
             ]);
 
-            return $this->successResponse();
+            return $this->successResponse($issue);
         } catch (Exception $exception) {
             return $this->errorResponse($exception, 500);
         }
@@ -103,7 +99,6 @@ class IssueService
         try {
             $issue->subIssues()->create([
                 'title' => $title,
-                'issue_status_id' => self::STATUS_INCOMPLETE,
                 'board_section_id' => $issue->board_section_id,
                 'sequence' => $issue->subIssues()->max('sequence') + 1,
                 'parent_issue_id' => $issue->id,
@@ -127,8 +122,16 @@ class IssueService
     public function toggleComplete(Issue $issue)
     {
         try {
-            $issue->update(['issue_status_id' => $issue->issue_status_id == self::STATUS_INCOMPLETE ? self::STATUS_COMPLETE : self::STATUS_INCOMPLETE]);
-            return $this->successResponse();
+            $backlogBoardSection = $issue->project->boardSections()->type('backlog')->first();
+            $doneBoardSection = $issue->project->boardSections()->type('done')->first();
+
+            if ($issue->is_complete) {
+                $issue->update(['board_section_id' => $backlogBoardSection->id]);
+            } else {
+                $issue->update(['board_section_id' => $doneBoardSection->id]);
+            }
+
+            return $this->successResponse($issue);
         } catch (Exception $exception) {
             return $this->errorResponse($exception, 500);
         }
@@ -175,29 +178,5 @@ class IssueService
             // Move the issue down in the list
             $board->issues()->rootIssues()->whereBetween('sequence', [$originalPosition + 1, $newPosition])->decrement('sequence');
         }
-    }
-
-    /**
-     * Generate a success JSON response.
-     *
-     * @param mixed $data
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function successResponse($data = null)
-    {
-        return response()->json(['success' => true, 'data' => $data]);
-    }
-
-    /**
-     * Generate an error JSON response.
-     *
-     * @param \Exception $exception
-     * @param int $statusCode
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function errorResponse(Exception $exception, $statusCode = 400)
-    {
-        Log::error($exception->getMessage());
-        return response()->json(['success' => false, 'message' => $exception->getMessage()], $statusCode);
     }
 }

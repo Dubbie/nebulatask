@@ -26,7 +26,8 @@ const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const showActions = ref(false);
 const preToggle = ref(false);
 const completed = computed(() => {
-    const isComplete = props.subIssue.issue_status_id === 4;
+    console.log(props.subIssue);
+    const isComplete = props.subIssue.is_complete;
     return preToggle.value ? !isComplete : isComplete;
 });
 
@@ -53,7 +54,10 @@ const toggleComplete = () => {
             })
         )
         .then((response) => {
-            emitter.emit("update-issue", props.subIssue.parent_issue_id);
+            emitter.emit("issue-updated", response.data.data);
+        })
+        .catch((error) => {
+            preToggle.value = false;
         });
 };
 

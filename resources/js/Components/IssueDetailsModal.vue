@@ -7,7 +7,7 @@ import IssueTitle from "@/Components/IssueTitle.vue";
 import SubIssues from "@/Components/SubIssues.vue";
 import AppSlideover from "@/Components/AppSlideover.vue";
 import IssueDescription from "@/Components/IssueDescription.vue";
-import IssueStatusSelector from "@/Components/IssueStatusSelector.vue";
+import IssueBoardSectionSelector from "@/Components/IssueBoardSectionSelector.vue";
 import IssueAssigneeChooser from "@/Components/IssueAssigneeChooser.vue";
 import IssueDueChooser from "@/Components/IssueDueChooser.vue";
 
@@ -88,7 +88,7 @@ onMounted(() => {
                         {{ issue.code }}
                     </p>
 
-                    <IssueStatusSelector />
+                    <IssueBoardSectionSelector />
                 </div>
 
                 <div class="flex items-center space-x-2">

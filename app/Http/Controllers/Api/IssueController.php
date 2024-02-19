@@ -7,7 +7,6 @@ use App\Http\Requests\MoveIssueRequest;
 use App\Http\Requests\StoreIssueRequest;
 use App\Http\Requests\StoreSubIssueRequest;
 use App\Http\Requests\UpdateIssueSequenceRequest;
-use App\Http\Requests\UpdateIssuesSequenceRequest;
 use App\Models\BoardSection;
 use App\Models\Issue;
 use App\Models\Project;

@@ -35,6 +35,8 @@ class BoardSectionService
 
             DB::commit();
 
+            $this->updateBoardTypes($boardSection->project);
+
             return response()->json([
                 'success' => true
             ]);
@@ -57,6 +59,8 @@ class BoardSectionService
                 'sequence' => $project->boardSections()->max('sequence') + 1
             ])->load('issues');
 
+            $this->updateBoardTypes($boardSection->project);
+
             return response()->json([
                 'success' => true,
                 'data' => $boardSection
@@ -74,7 +78,10 @@ class BoardSectionService
     public function delete(BoardSection $boardSection)
     {
         try {
+            $project = $boardSection->project;
             $boardSection->delete();
+
+            $this->updateBoardTypes($project);
 
             return true;
         } catch (Exception $exception) {
@@ -82,5 +89,22 @@ class BoardSectionService
 
             return false;
         }
+    }
+
+    protected function updateBoardTypes(Project $project)
+    {
+        $projectId = $project->id;
+
+        // Update backlog directly without fetching the model instance
+        $project->boardSections()->where('sequence', 0)->update(['type' => 'BACKLOG']);
+
+        // Update done directly without fetching the model instance
+        $project->boardSections()->where('sequence', $project->boardSections()->max('sequence'))->update(['type' => 'DONE']);
+
+        // Update intermediate directly without fetching the model instances
+        $project->boardSections()
+            ->where('sequence', '>', 0)
+            ->where('sequence', '<', $project->boardSections()->max('sequence'))
+            ->update(['type' => 'INTERMEDIATE']);
     }
 }

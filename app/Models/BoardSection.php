@@ -10,7 +10,7 @@ class BoardSection extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'sequence', 'project_id', 'is_collapsed'];
+    protected $fillable = ['name', 'sequence', 'project_id', 'is_collapsed', 'type'];
 
     public function project()
     {
@@ -20,6 +20,11 @@ class BoardSection extends Model
     public function issues()
     {
         return $this->hasMany(Issue::class)->rootIssues()->orderBy('sequence');
+    }
+
+    public function scopeType($query, string $type)
+    {
+        return $query->where('type', $type);
     }
 
     protected static function booted()

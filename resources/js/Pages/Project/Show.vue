@@ -15,18 +15,14 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    statuses: {
+    boardSections: {
         type: Array,
-        required: true,
-    },
-    boardSectionCount: {
-        type: Number,
         required: true,
     },
 });
 
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
-const boardSections = ref(null);
+const boardSectionsReactive = ref(null);
 const processingBoardSection = ref(null);
 const draggingElement = ref(null);
 const showNewIssueModal = ref(false);
@@ -34,7 +30,7 @@ const selectedBoardSectionId = ref(null);
 const selectedIssue = ref(null);
 const showIssueDetails = ref(false);
 
-provide("statuses", props.statuses);
+provide("availableBoardSections", props.boardSections);
 provide("selectedIssue", selectedIssue);
 
 const handleStart = (event) => {
@@ -60,7 +56,7 @@ const getBoardSections = () => {
     axios
         .get(route("api.project.board-sections", { project: props.project.id }))
         .then((response) => {
-            boardSections.value = response.data;
+            boardSectionsReactive.value = response.data;
         });
 };
 
@@ -78,32 +74,55 @@ const updateIssueSequence = (issueId, boardSectionId, newIndex) => {
 };
 
 const handleIssueMoved = (issueId, boardSectionId, newIndex) => {
-    axios.put(route("api.issue.move", { issue: issueId }), {
-        board_section_id: boardSectionId,
-        sequence: newIndex,
-    });
+    emitter.emit("board-section-move-start");
+    axios
+        .put(route("api.issue.move", { issue: issueId }), {
+            board_section_id: boardSectionId,
+            sequence: newIndex,
+        })
+        .then((response) => {
+            updateIssue(response.data.data);
+        })
+        .finally(() => {
+            emitter.emit("board-section-move-end");
+        });
 };
 
-const updateIssue = (issueData) => {
-    boardSections.value = boardSections.value.map((section) => {
+const updateIssue = (issueData, newIndex) => {
+    boardSectionsReactive.value = boardSectionsReactive.value.map((section) => {
         if (section.id === issueData.board_section_id) {
-            section.issues = section.issues.map((issue) => {
-                if (issue.id === issueData.id) {
-                    issue = issueData;
-                }
-                return issue;
-            });
+            // Check if issue ID is not found in the issues then push it, else update it
+            if (!section.issues.some((issue) => issue.id === issueData.id)) {
+                section.issues.splice(newIndex, 0, issueData);
+                return section;
+            } else {
+                section.issues = section.issues.map((issue) => {
+                    if (issue.id === issueData.id) {
+                        issue = issueData;
+                    }
+                    return issue;
+                });
+            }
+        } else {
+            // Check if issue ID is found in the issues, then remove from array
+            if (section.issues.some((issue) => issue.id === issueData.id)) {
+                section.issues = section.issues.filter(
+                    (issue) => issue.id !== issueData.id
+                );
+            }
         }
         return section;
     });
 
-    if (selectedIssue.value.id === issueData.id) {
+    sortIssues();
+
+    if (selectedIssue.value && selectedIssue.value.id === issueData.id) {
         selectedIssue.value = issueData;
     }
 };
 
 const createIssue = (issueData) => {
-    boardSections.value = boardSections.value.map((section) => {
+    boardSectionsReactive.value = boardSectionsReactive.value.map((section) => {
         if (section.id === issueData.board_section_id) {
             section.issues.push(issueData);
         }
@@ -112,34 +131,34 @@ const createIssue = (issueData) => {
 };
 
 const deleteIssue = (issueId) => {
-    boardSections.value = boardSections.value.map((section) => {
+    boardSectionsReactive.value = boardSectionsReactive.value.map((section) => {
         section.issues = section.issues.filter((issue) => issue.id !== issueId);
         return section;
     });
 
-    console.log("deleted issue", issueId);
-
-    console.log(boardSections.value);
+    sortIssues();
 };
 
 const createBoardSection = (boardSectionData) => {
-    boardSections.value.push(boardSectionData);
+    boardSectionsReactive.value.push(boardSectionData);
 };
 
 const deleteBoardSection = (boardSectionId) => {
-    boardSections.value = boardSections.value.filter(
+    boardSectionsReactive.value = boardSectionsReactive.value.filter(
         (section) => section.id !== boardSectionId
     );
 
     // Check if selected issue is in the deleted section
-    if (selectedIssue.value.board_section_id === boardSectionId) {
+    if (
+        selectedIssue.value &&
+        selectedIssue.value.board_section_id === boardSectionId
+    ) {
         emitter.emit("close-issue-details");
         selectedIssue.value = null;
     }
 };
 
 const handleClickEvent = (event) => {
-    console.log(event);
     const clicked = document.elementFromPoint(event.clientX, event.clientY);
 
     // Find the closest .handle element
@@ -147,6 +166,12 @@ const handleClickEvent = (event) => {
     if (handle) {
         event.stopPropagation();
     }
+};
+
+const sortIssues = () => {
+    boardSectionsReactive.value.forEach((section) => {
+        section.issues.sort((a, b) => a.sequence - b.sequence);
+    });
 };
 
 onMounted(() => {
@@ -223,8 +248,8 @@ onMounted(() => {
                     mode="out-in"
                 >
                     <BoardSectionsLoading
-                        v-if="!boardSections"
-                        :board-section-count="boardSectionCount"
+                        v-if="!boardSectionsReactive"
+                        :board-section-count="boardSections.length"
                     />
 
                     <div
@@ -232,7 +257,7 @@ onMounted(() => {
                         v-else
                     >
                         <draggable
-                            :list="boardSections"
+                            :list="boardSectionsReactive"
                             group="sections"
                             @change="handleChange"
                             @start="handleStart"

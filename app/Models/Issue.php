@@ -23,13 +23,15 @@ class Issue extends Model
     ];
 
     protected $with = [
-        'status',
         'assignee',
         'subIssues',
     ];
 
     protected $appends = [
-        'code'
+        'code',
+        'type',
+        'status',
+        'is_complete'
     ];
 
     protected function code(): Attribute
@@ -41,9 +43,25 @@ class Issue extends Model
         );
     }
 
-    public function status()
+    protected function type(): Attribute
     {
-        return $this->hasOne(IssueStatus::class, 'id', 'issue_status_id');
+        return Attribute::make(
+            get: fn () => $this->parent_issue_id ? 'SUB_ISSUE' : 'ISSUE'
+        );
+    }
+
+    protected function isComplete(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->status === 'DONE'
+        );
+    }
+
+    protected function status(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->boardSection->type
+        );
     }
 
     public function assignee()

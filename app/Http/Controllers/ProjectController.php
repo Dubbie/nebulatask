@@ -52,8 +52,7 @@ class ProjectController extends Controller
 
         return Inertia::render('Project/Show', [
             'project' => $project,
-            'statuses' => IssueStatus::all(),
-            'boardSectionCount' => $project->boardSections->count()
+            'boardSections' => $project->boardSections,
         ]);
     }
 

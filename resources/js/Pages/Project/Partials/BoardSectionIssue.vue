@@ -1,6 +1,6 @@
 <script setup>
 import AppCard from "@/Components/AppCard.vue";
-import IssueStatusIcon from "@/Components/IssueStatusIcon.vue";
+import IssueTypeIcon from "@/Components/IssueTypeIcon.vue";
 import { computed, inject } from "vue";
 
 const props = defineProps({
@@ -40,14 +40,14 @@ const selected = computed(() => props.issue.id === selectedIssue.value?.id);
         </p>
 
         <div class="flex items-center space-x-2">
-            <IssueStatusIcon :status="issue.status" />
+            <IssueTypeIcon size-class="size-3" :type="issue.type" />
             <p class="text-xs font-semibold text-zinc-400 flex-1">
                 {{ issue.code }}
             </p>
 
             <img
                 :src="issue.assignee.profile_photo_url"
-                class="size-6 rounded-full"
+                class="size-5 rounded-full"
                 alt=""
             />
         </div>

@@ -21,14 +21,7 @@ const props = defineProps({
 });
 
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
-const statuses = inject("statuses");
 const storing = ref(false);
-const statusOptions = statuses.map((status) => {
-    return {
-        label: status.formatted_name,
-        value: status.id,
-    };
-});
 const buttonLabel = computed(() => {
     return storing.value ? "Creating issue..." : "Create";
 });
@@ -37,7 +30,6 @@ const form = useForm({
     title: "",
     description: "",
     due_date: null,
-    issue_status_id: statusOptions[0].value,
     board_section_id: props.boardSectionId ? props.boardSectionId : null,
 });
 
@@ -147,14 +139,6 @@ const emit = defineEmits(["close"]);
                                 {{ $page.props.auth.user.name }}
                             </p>
                         </div>
-                    </div>
-                    <div>
-                        <InputLabel for="status" class="mb-1" value="Status" />
-                        <SelectInput
-                            id="status"
-                            v-model="form.issue_status_id"
-                            :options="statusOptions"
-                        />
                     </div>
                 </div>
             </div>
