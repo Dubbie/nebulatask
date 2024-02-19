@@ -1,5 +1,12 @@
 <script setup>
-import { getCurrentInstance, inject, onMounted, ref, watch } from "vue";
+import {
+    getCurrentInstance,
+    inject,
+    onMounted,
+    onUnmounted,
+    ref,
+    watch,
+} from "vue";
 import AppButton from "@/Components/AppButton.vue";
 import NewSubIssue from "@/Components/NewSubIssue.vue";
 import { useForm } from "@inertiajs/vue3";
@@ -80,6 +87,10 @@ onMounted(() => {
             showNewIssue.value = false;
         }
     });
+});
+
+onUnmounted(() => {
+    emitter.off("stop-editing-issue");
 });
 </script>
 

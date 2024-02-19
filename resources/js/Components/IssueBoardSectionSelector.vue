@@ -1,5 +1,12 @@
 <script setup>
-import { getCurrentInstance, inject, onMounted, ref, watch } from "vue";
+import {
+    getCurrentInstance,
+    inject,
+    onMounted,
+    onUnmounted,
+    ref,
+    watch,
+} from "vue";
 import SelectInput from "@/Components/SelectInput.vue";
 
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
@@ -41,6 +48,11 @@ onMounted(() => {
     emitter.on("board-section-move-end", () => {
         savingStatus.value = false;
     });
+});
+
+onUnmounted(() => {
+    emitter.off("board-section-move-start");
+    emitter.off("board-section-move-end");
 });
 </script>
 

@@ -1,5 +1,5 @@
 <script setup>
-import { getCurrentInstance, onMounted, ref } from "vue";
+import { getCurrentInstance, onMounted, onUnmounted, ref } from "vue";
 import NewProjectModal from "./NewProjectModal.vue";
 
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
@@ -13,6 +13,11 @@ onMounted(() => {
     emitter.on("hide-new-project-modal", () => {
         showModal.value = false;
     });
+});
+
+onUnmounted(() => {
+    emitter.off("show-new-project-modal");
+    emitter.off("hide-new-project-modal");
 });
 </script>
 

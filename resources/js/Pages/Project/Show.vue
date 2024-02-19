@@ -4,7 +4,7 @@ import ProjectSidebar from "@/Pages/Project/Partials/ProjectSidebar.vue";
 import BoardSectionsLoading from "@/Pages/Project/Partials/BoardSectionsLoading.vue";
 import BoardSection from "@/Pages/Project/Partials/BoardSection.vue";
 import axios from "axios";
-import { getCurrentInstance, onMounted, provide, ref } from "vue";
+import { getCurrentInstance, onMounted, onUnmounted, provide, ref } from "vue";
 import draggable from "vuedraggable";
 import NewIssueModal from "@/Components/NewIssueModal.vue";
 import AddBoardSection from "@/Components/AddBoardSection.vue";
@@ -145,6 +145,8 @@ const createIssue = (issueData) => {
         }
         return section;
     });
+
+    console.log(boardSectionsReactive.value);
 };
 
 const deleteIssue = (issueId) => {
@@ -259,6 +261,21 @@ onMounted(() => {
         selectedIssue.value = null;
         showIssueDetails.value = false;
     });
+});
+
+onUnmounted(() => {
+    emitter.off("issue-updated");
+    emitter.off("issue-created");
+    emitter.off("issue-deleted");
+    emitter.off("board-section-created");
+    emitter.off("board-section-deleted");
+    emitter.off("issue-moved");
+    emitter.off("issue-moved-across");
+    emitter.off("show-new-issue-modal");
+    emitter.off("close-new-issue-modal");
+    emitter.off("show-issue-details");
+    emitter.off("close-issue-details");
+    console.log("Unmounted before");
 });
 </script>
 

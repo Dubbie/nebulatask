@@ -1,6 +1,6 @@
 <script setup>
 import { IconPlus } from "@tabler/icons-vue";
-import { getCurrentInstance, onMounted, ref } from "vue";
+import { getCurrentInstance, ref } from "vue";
 import TextInput from "@/Components/TextInput.vue";
 import { useForm } from "@inertiajs/vue3";
 import axios from "axios";

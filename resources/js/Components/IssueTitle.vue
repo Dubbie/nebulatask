@@ -3,6 +3,7 @@ import {
     getCurrentInstance,
     inject,
     onMounted,
+    onUnmounted,
     onUpdated,
     ref,
     watch,
@@ -14,14 +15,6 @@ const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const editing = ref(false);
 const saving = ref(false);
 const title = ref("");
-
-onMounted(() => {
-    emitter.on("stop-editing-issue", () => {
-        if (editing.value) {
-            updateTitle();
-        }
-    });
-});
 
 const updateTitle = () => {
     const oldTitle = issue.value.title;
@@ -57,6 +50,18 @@ watch(
         immediate: true,
     }
 );
+
+onMounted(() => {
+    emitter.on("stop-editing-issue", () => {
+        if (editing.value) {
+            updateTitle();
+        }
+    });
+});
+
+onUnmounted(() => {
+    emitter.off("stop-editing-issue");
+});
 </script>
 
 <template>

@@ -1,7 +1,14 @@
 <script setup>
 import { usePage } from "@inertiajs/vue3";
 import Editor from "@tinymce/tinymce-vue";
-import { getCurrentInstance, inject, onMounted, ref, watch } from "vue";
+import {
+    getCurrentInstance,
+    inject,
+    onMounted,
+    onUnmounted,
+    ref,
+    watch,
+} from "vue";
 
 const editing = ref(false);
 const issue = inject("issue");
@@ -34,6 +41,14 @@ const updateDescription = () => {
         });
 };
 
+watch(
+    issue,
+    (newIssue) => {
+        description.value = newIssue ? newIssue.description : null;
+    },
+    { immediate: true }
+);
+
 onMounted(() => {
     emitter.on("stop-editing-issue", () => {
         if (editing.value) {
@@ -42,13 +57,9 @@ onMounted(() => {
     });
 });
 
-watch(
-    issue,
-    (newIssue) => {
-        description.value = newIssue ? newIssue.description : null;
-    },
-    { immediate: true }
-);
+onUnmounted(() => {
+    emitter.off("stop-editing-issue");
+});
 </script>
 
 <template>

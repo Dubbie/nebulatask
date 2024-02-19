@@ -55,6 +55,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+    emitter.off("close-slideover", close);
     document.removeEventListener("keydown", closeOnEscape);
     document.body.style.overflow = null;
 });

@@ -1,7 +1,14 @@
 <script setup>
 import draggable from "vuedraggable";
 import BoardSectionIssue from "@/Pages/Project/Partials/BoardSectionIssue.vue";
-import { computed, getCurrentInstance, onMounted, ref, watch } from "vue";
+import {
+    computed,
+    getCurrentInstance,
+    onMounted,
+    onUnmounted,
+    ref,
+    watch,
+} from "vue";
 import AddIssueButton from "@/Pages/Project/Partials/AddIssueButton.vue";
 import BoardSectionHeader from "./BoardSectionHeader.vue";
 import axios from "axios";
@@ -122,6 +129,12 @@ onMounted(() => {
     emitter.on("reset-issue-count", () => {
         childCount.value = props.section.issues.length;
     });
+});
+
+onUnmounted(() => {
+    emitter.off("remove-from-section");
+    emitter.off("add-to-section");
+    emitter.off("reset-issue-count");
 });
 </script>
 
