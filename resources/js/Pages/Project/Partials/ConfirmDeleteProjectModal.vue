@@ -2,6 +2,7 @@
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import AppButton from "@/Components/AppButton.vue";
 import { useForm } from "@inertiajs/vue3";
+import { ref } from "vue";
 
 const props = defineProps({
     show: {
@@ -40,11 +41,10 @@ const emit = defineEmits(["close"]);
         </template>
 
         <template #footer>
-            <AppButton @click="$emit('close')"> Cancel </AppButton>
+            <AppButton plain @click="$emit('close')"> Cancel </AppButton>
 
             <AppButton
                 color="red"
-                :class="{ 'opacity-25': deleteProjectForm.processing }"
                 :disabled="deleteProjectForm.processing"
                 @click="handleDeleteProject"
             >

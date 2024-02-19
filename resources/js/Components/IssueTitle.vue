@@ -1,5 +1,5 @@
 <script setup>
-import { getCurrentInstance, inject, ref } from "vue";
+import { getCurrentInstance, inject, ref, watch } from "vue";
 import TextInput from "@/Components/TextInput.vue";
 
 const issue = inject("issue");
@@ -40,6 +40,10 @@ const reset = (newTitle = issue.value.title) => {
     editing.value = false;
     title.value = newTitle;
 };
+
+watch(issue, (newIssue) => {
+    title.value = newIssue ? newIssue.title : null;
+});
 </script>
 
 <template>

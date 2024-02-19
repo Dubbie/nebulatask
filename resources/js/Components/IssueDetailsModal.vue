@@ -35,17 +35,21 @@ provide("issue", issue);
 
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const confirmDelete = ref(false);
-const deleteForm = useForm({
-    _method: "DELETE",
-});
+const deleting = ref(false);
 
 const handleDelete = () => {
     const issueId = props.issue.id;
+    deleting.value = true;
 
-    axios.delete(route("api.issue.destroy", issueId)).then(() => {
-        emitter.emit("issue-deleted", issueId);
-        emit("close");
-    });
+    axios
+        .delete(route("api.issue.destroy", issueId))
+        .then(() => {
+            emitter.emit("issue-deleted", issueId);
+            emit("close");
+        })
+        .finally(() => {
+            deleting.value = false;
+        });
 };
 
 const stopEditing = (closing = false) => {
@@ -147,7 +151,7 @@ onUnmounted(() => {
                                         size="sm"
                                         color="red"
                                         @click="handleDelete"
-                                        :disabled="deleteForm.processing"
+                                        :disabled="deleting"
                                     >
                                         Delete
                                     </AppButton>

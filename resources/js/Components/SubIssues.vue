@@ -40,6 +40,7 @@ const handleNewIssue = () => {
         .then((response) => {
             emitter.emit("issue-created", response.data.data);
             showNewIssue.value = false;
+            newIssueForm.reset();
         })
         .catch((error) => {
             console.log(error);
@@ -102,6 +103,7 @@ const updatePosition = (event) => {
             v-model:title="newIssueForm.title"
             class="mb-2"
             v-if="showNewIssue"
+            :disabled="savingSubIssue"
             @blur="handleNewIssue"
         />
 

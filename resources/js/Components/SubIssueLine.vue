@@ -10,6 +10,8 @@ import axios from "axios";
 import { IconCheck } from "@tabler/icons-vue";
 import AppButton from "./AppButton.vue";
 import { IconGripVertical } from "@tabler/icons-vue";
+import { IconChevronRight } from "@tabler/icons-vue";
+import { IconX } from "@tabler/icons-vue";
 
 const props = defineProps({
     subIssue: {
@@ -113,41 +115,28 @@ watch(
                 <div
                     class="opacity-0 flex items-center space-x-2 group-hover/item:opacity-100"
                 >
-                    <!-- <img
-                :src="subIssue.assignee.profile_photo_url"
-                class="size-8 rounded-full"
-            /> -->
-
-                    <!-- <div class="p-1 border rounded-full border-zinc-950/20">
-                <IconCalendarDue class="text-zinc-950/20 size-6" />
-            </div> -->
-
-                    <Dropdown>
-                        <template #trigger>
-                            <AppButton size="xs" plain square>
-                                <IconDots
-                                    class="cursor-pointer rounded-lg text-zinc-400 size-5"
-                                />
-                            </AppButton>
-                        </template>
-
-                        <template #content>
-                            <DropdownLink
-                                as="button"
-                                class="text-sm"
-                                @click="handleShowSubIssue"
-                            >
-                                Show details
-                            </DropdownLink>
-                            <DropdownLink
-                                as="button"
-                                class="text-sm"
-                                @click="deleteSubIssue"
-                            >
-                                Delete
-                            </DropdownLink>
-                        </template>
-                    </Dropdown>
+                    <div class="flex space-x-1">
+                        <AppButton
+                            size="xs"
+                            plain
+                            square
+                            @click="deleteSubIssue()"
+                        >
+                            <IconX
+                                class="cursor-pointer rounded-lg text-zinc-400 size-5"
+                            />
+                        </AppButton>
+                        <AppButton
+                            size="xs"
+                            plain
+                            square
+                            @click="handleShowSubIssue()"
+                        >
+                            <IconChevronRight
+                                class="cursor-pointer rounded-lg text-zinc-400 size-5"
+                            />
+                        </AppButton>
+                    </div>
                 </div>
             </div>
         </div>

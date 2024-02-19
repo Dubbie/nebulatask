@@ -31,7 +31,7 @@ const colorClasses = computed(() => {
     >
         <IconCheck
             :class="sizeClass"
-            :stroke-width="2"
+            :stroke-width="3"
             v-if="type === 'ISSUE'"
         />
         <IconLayersIntersect

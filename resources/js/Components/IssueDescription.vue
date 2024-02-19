@@ -34,13 +34,9 @@ const updateDescription = () => {
         });
 };
 
-watch(
-    issue,
-    (newIssue) => {
-        description.value = newIssue ? newIssue.description : null;
-    },
-    { immediate: true }
-);
+watch(issue, (newIssue) => {
+    description.value = newIssue ? newIssue.description : null;
+});
 </script>
 
 <template>

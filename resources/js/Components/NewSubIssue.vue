@@ -6,6 +6,10 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    disabled: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const emit = defineEmits(["update:title", "blur"]);
@@ -17,7 +21,9 @@ const emit = defineEmits(["update:title", "blur"]);
             autofocus
             class="text-sm w-full"
             :model-value="title"
+            :disabled="disabled"
             @update:model-value="$emit('update:title', $event)"
+            @keyup.enter="$emit('blur')"
             type="text"
             @blur="$emit('blur')"
         />
