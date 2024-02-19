@@ -68,7 +68,6 @@ const handleDragEnd = () => {
 };
 
 const updatePosition = (event) => {
-    console.log(cloneElement);
     if (cloneElement) {
         updateClonePosition(event);
     }

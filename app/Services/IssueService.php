@@ -132,7 +132,8 @@ class IssueService extends ApiService
                 $issue->update(['board_section_id' => $doneBoardSection->id]);
             }
 
-            return $this->successResponse(Issue::find($issue->parent_issue_id));
+            $issue->refresh();
+            return $this->successResponse($issue);
         } catch (Exception $exception) {
             return $this->errorResponse($exception, 500);
         }

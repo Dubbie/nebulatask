@@ -114,20 +114,27 @@ const updateIssue = (issueData, newIndex) => {
         return section;
     });
 
+    console.log("Updated issue:", issueData);
+
     // Update selectedIssue if it matches the issueData
     if (selectedIssue.value && selectedIssue.value.id === issueData.id) {
         selectedIssue.value = issueData;
     }
 
-    // Update selectedIssue if it is a sub issue of the updated issue
+    // Update parent if issue has one
     if (
-        selectedIssue.value &&
-        selectedIssue.value.parent &&
-        selectedIssue.value.parent.id === issueData.id
+        issueData.parent_issue_id &&
+        selectedIssue.value.id === issueData.parent_issue_id
     ) {
-        selectedIssue.value = issueData.sub_issues.find(
-            (issue) => issue.id === selectedIssue.value.id
-        );
+        const parent = findIssueById(issueData.parent_issue_id);
+
+        // Update the parent's sub issues aswell with the new data
+        parent.sub_issues = parent.sub_issues.map((issue) => {
+            if (issue.id === issueData.id) {
+                issue = issueData;
+            }
+            return issue;
+        });
     }
 };
 
