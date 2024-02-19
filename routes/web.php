@@ -61,7 +61,8 @@ Route::middleware([
     Route::put('/api/sub-issue/{subIssue}/complete/toggle', [SubIssueController::class, 'toggleComplete'])->name('api.sub-issue.complete.toggle');
 
     Route::get('/api/project/{project}/board-sections', [ProjectApiController::class, 'getBoardSections'])->name('api.project.board-sections');
-    Route::post('/api/board-section/store', [BoardSectionApiController::class, 'storeBoardSection'])->name('api.board-section.store');
+    Route::post('/api/board-section/store', [BoardSectionApiController::class, 'store'])->name('api.board-section.store');
+    Route::put('/api/board-section/{boardSection}/update', [BoardSectionApiController::class, 'update'])->name('api.board-section.update');
     Route::put('/api/board-section/{boardSection}/move', [BoardSectionApiController::class, 'handleMove'])->name('api.board-section.move');
-    Route::delete('/api/board-section/{boardSection}/destroy', [BoardSectionApiController::class, 'destroyBoardSection'])->name('api.board-section.destroy');
+    Route::delete('/api/board-section/{boardSection}/destroy', [BoardSectionApiController::class, 'destroy'])->name('api.board-section.destroy');
 });

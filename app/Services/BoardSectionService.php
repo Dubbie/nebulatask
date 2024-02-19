@@ -8,7 +8,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class BoardSectionService
+class BoardSectionService extends ApiService
 {
     public function updateSequence(BoardSection $boardSection, int $newPosition)
     {
@@ -37,17 +37,11 @@ class BoardSectionService
 
             $this->updateBoardTypes($boardSection->project);
 
-            return response()->json([
-                'success' => true
-            ]);
+            return $this->successResponse();
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error($e->getMessage());
 
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
+            return $this->errorResponse($e, 500);
         }
     }
 
@@ -63,17 +57,9 @@ class BoardSectionService
 
             $this->updateBoardTypes($boardSection->project);
 
-            return response()->json([
-                'success' => true,
-                'data' => $boardSection
-            ]);
+            return $this->successResponse($boardSection);
         } catch (Exception $e) {
-            Log::error($e->getMessage());
-
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
+            $this->errorResponse($e, 500);
         }
     }
 
@@ -85,18 +71,14 @@ class BoardSectionService
 
             $this->updateBoardTypes($project);
 
-            return true;
+            return $this->successResponse();
         } catch (Exception $exception) {
-            Log::error($exception->getMessage());
-
-            return false;
+            return $this->errorResponse($exception, 500);
         }
     }
 
     protected function updateBoardTypes(Project $project)
     {
-        $projectId = $project->id;
-
         // Update backlog directly without fetching the model instance
         $project->boardSections()->where('sequence', 0)->update(['type' => 'BACKLOG']);
 
@@ -108,5 +90,20 @@ class BoardSectionService
             ->where('sequence', '>', 0)
             ->where('sequence', '<', $project->boardSections()->max('sequence'))
             ->update(['type' => 'INTERMEDIATE']);
+    }
+
+    public function updateName(BoardSection $boardSection, string $name)
+    {
+        try {
+            $boardSection->update([
+                'name' => $name
+            ]);
+
+            $sectionIssues = $boardSection->load('issues');
+
+            return $this->successResponse($sectionIssues);
+        } catch (Exception $exception) {
+            return $this->errorResponse($exception, 500);
+        }
     }
 }

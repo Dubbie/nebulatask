@@ -27,6 +27,7 @@ const newIssueForm = useForm({
 
 const handleNewIssue = () => {
     if (newIssueForm.title.length < 1) {
+        showNewIssue.value = false;
         return;
     }
 
@@ -37,7 +38,7 @@ const handleNewIssue = () => {
             newIssueForm.data()
         )
         .then((response) => {
-            emitter.emit("issue-updated", response.data.data);
+            emitter.emit("issue-created", response.data.data);
             showNewIssue.value = false;
         })
         .catch((error) => {
@@ -80,33 +81,18 @@ const updatePosition = (event) => {
         updateClonePosition(event);
     }
 };
-
-onMounted(() => {
-    emitter.on("stop-editing-issue", () => {
-        if (showNewIssue.value) {
-            handleNewIssue();
-        }
-    });
-});
-
-onUnmounted(() => {
-    emitter.off("stop-editing-issue");
-});
 </script>
 
 <template>
     <div>
-        <AppButton
-            outline
-            @click.stop="showNewIssue = true"
-            v-show="!showNewIssue"
+        <AppButton outline @click="showNewIssue = true" v-show="!showNewIssue"
             >Add sub-issue</AppButton
         >
 
         <p
             class="text-sm text-zinc-500 mb-1"
             :class="{
-                'mt-2': issue.sub_issues.length > 0,
+                'mt-3': issue.sub_issues.length > 0,
             }"
             v-show="showNewIssue || issue.sub_issues.length > 0"
         >
@@ -115,8 +101,8 @@ onUnmounted(() => {
         <NewSubIssue
             v-model:title="newIssueForm.title"
             class="mb-2"
-            v-show="showNewIssue"
-            @click.stop
+            v-if="showNewIssue"
+            @blur="handleNewIssue"
         />
 
         <draggable

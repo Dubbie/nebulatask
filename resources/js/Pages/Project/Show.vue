@@ -138,12 +138,14 @@ const updateIssue = (issueData, newIndex) => {
 };
 
 const createIssue = (issueData) => {
-    boardSectionsReactive.value = boardSectionsReactive.value.map((section) => {
-        if (section.id === issueData.board_section_id) {
-            section.issues.push(issueData);
-        }
-        return section;
-    });
+    if (issueData.parent_issue_id) {
+        const parent = findIssueById(issueData.parent_issue_id);
+        parent.sub_issues.push(issueData);
+    } else {
+        boardSectionsReactive.value
+            .find((section) => section.id === issueData.board_section_id)
+            .issues.push(issueData);
+    }
 };
 
 const deleteIssue = (issueId) => {
@@ -266,12 +268,32 @@ onMounted(() => {
 
     emitter.on("show-issue-details", (issueId) => {
         selectedIssue.value = findIssueById(issueId);
+        console.log(selectedIssue.value);
         showIssueDetails.value = true;
     });
 
     emitter.on("close-issue-details", () => {
         selectedIssue.value = null;
         showIssueDetails.value = false;
+    });
+
+    emitter.on("update-section-issues", (data) => {
+        // Update the section issues
+        const sectionId = data.sectionId;
+        const name = data.name;
+        const issues = data.issues;
+
+        boardSectionsReactive.value = boardSectionsReactive.value.map(
+            (section) => {
+                if (section.id === sectionId) {
+                    section.name = name;
+                    section.issues = issues;
+                }
+                return section;
+            }
+        );
+
+        updateAvailableBoardSections();
     });
 });
 
@@ -287,6 +309,7 @@ onUnmounted(() => {
     emitter.off("close-new-issue-modal");
     emitter.off("show-issue-details");
     emitter.off("close-issue-details");
+    emitter.off("update-section-issues");
 });
 </script>
 

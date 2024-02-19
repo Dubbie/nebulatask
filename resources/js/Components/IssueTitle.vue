@@ -1,22 +1,22 @@
 <script setup>
-import {
-    getCurrentInstance,
-    inject,
-    onMounted,
-    onUnmounted,
-    onUpdated,
-    ref,
-    watch,
-} from "vue";
+import { getCurrentInstance, inject, ref } from "vue";
 import TextInput from "@/Components/TextInput.vue";
 
 const issue = inject("issue");
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const editing = ref(false);
 const saving = ref(false);
-const title = ref("");
+const title = ref(issue.value?.title);
 
 const updateTitle = () => {
+    if (
+        !title.value ||
+        title.value === issue.value.title ||
+        title.value === ""
+    ) {
+        return;
+    }
+
     const oldTitle = issue.value.title;
     saving.value = true;
 
@@ -40,28 +40,6 @@ const reset = (newTitle = issue.value.title) => {
     editing.value = false;
     title.value = newTitle;
 };
-
-watch(
-    issue,
-    (newIssue) => {
-        title.value = newIssue ? newIssue.title : "";
-    },
-    {
-        immediate: true,
-    }
-);
-
-onMounted(() => {
-    emitter.on("stop-editing-issue", () => {
-        if (editing.value) {
-            updateTitle();
-        }
-    });
-});
-
-onUnmounted(() => {
-    emitter.off("stop-editing-issue");
-});
 </script>
 
 <template>
@@ -83,6 +61,7 @@ onUnmounted(() => {
                 autofocus
                 v-model="title"
                 @keyup.enter="updateTitle"
+                @blur="updateTitle"
             />
         </div>
     </div>

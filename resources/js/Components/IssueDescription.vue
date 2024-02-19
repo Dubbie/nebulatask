@@ -1,20 +1,13 @@
 <script setup>
 import { usePage } from "@inertiajs/vue3";
 import Editor from "@tinymce/tinymce-vue";
-import {
-    getCurrentInstance,
-    inject,
-    onMounted,
-    onUnmounted,
-    ref,
-    watch,
-} from "vue";
+import { getCurrentInstance, inject, ref, watch } from "vue";
 
+const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const editing = ref(false);
 const issue = inject("issue");
-const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const savingDescription = ref(false);
-const description = ref(null);
+const description = ref(issue.value.description);
 const tinyApiKey = usePage().props.tiny_api_key;
 
 const updateDescription = () => {
@@ -31,7 +24,7 @@ const updateDescription = () => {
             description: description.value,
         })
         .then((response) => {
-            emitter.emit("update-issue", issue.value.id);
+            emitter.emit("issue-updated", response.data);
         })
         .catch((error) => {
             description.value = oldValue;
@@ -48,18 +41,6 @@ watch(
     },
     { immediate: true }
 );
-
-onMounted(() => {
-    emitter.on("stop-editing-issue", () => {
-        if (editing.value) {
-            updateDescription();
-        }
-    });
-});
-
-onUnmounted(() => {
-    emitter.off("stop-editing-issue");
-});
 </script>
 
 <template>
@@ -86,6 +67,7 @@ onUnmounted(() => {
                 v-model="description"
                 :init="{
                     menubar: false,
+                    auto_focus: true,
                     min_height: 120,
                     statusbar: false,
                     toolbar_location: 'bottom',
@@ -93,6 +75,7 @@ onUnmounted(() => {
                         'autolink autoresize code visualblocks visualchars fullscreen image link media codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists  quickbars',
                 }"
                 :api-key="tinyApiKey"
+                @blur="updateDescription"
             />
         </div>
     </div>

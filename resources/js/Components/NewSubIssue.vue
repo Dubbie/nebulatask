@@ -8,16 +8,18 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(["update:title"]);
+const emit = defineEmits(["update:title", "blur"]);
 </script>
 
 <template>
     <div class="flex space-x-2">
         <TextInput
+            autofocus
             class="text-sm w-full"
             :model-value="title"
             @update:model-value="$emit('update:title', $event)"
             type="text"
+            @blur="$emit('blur')"
         />
         <img
             :src="$page.props.auth.user.profile_photo_url"

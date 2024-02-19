@@ -146,8 +146,7 @@ onUnmounted(() => {
         ></div>
 
         <BoardSectionHeader
-            :section-name="section.name"
-            :issues-count="section.issues.length"
+            :section="section"
             @new-issue="handleNewIssue"
             @highlight="handleHighlight"
             @delete-section="handleDeleteSection"
