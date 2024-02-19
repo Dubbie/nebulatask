@@ -6,8 +6,7 @@ import TextInput from "@/Components/TextInput.vue";
 import TextareaInput from "@/Components/TextareaInput.vue";
 import InputError from "./InputError.vue";
 import { useForm } from "@inertiajs/vue3";
-import { ref, watch } from "vue";
-import axios from "axios";
+import { watch } from "vue";
 
 const props = defineProps({
     show: {
@@ -24,6 +23,7 @@ const form = useForm({
 
 const handleSubmit = () => {
     form.post(route("project.store"), {
+        preserveState: false,
         onSuccess: () => {
             form.reset();
             emit("close");

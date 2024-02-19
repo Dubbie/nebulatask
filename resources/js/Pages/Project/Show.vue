@@ -145,8 +145,6 @@ const createIssue = (issueData) => {
         }
         return section;
     });
-
-    console.log(boardSectionsReactive.value);
 };
 
 const deleteIssue = (issueId) => {
@@ -275,7 +273,6 @@ onUnmounted(() => {
     emitter.off("close-new-issue-modal");
     emitter.off("show-issue-details");
     emitter.off("close-issue-details");
-    console.log("Unmounted before");
 });
 </script>
 
