@@ -29,8 +29,9 @@ const showNewIssueModal = ref(false);
 const selectedBoardSectionId = ref(null);
 const selectedIssue = ref(null);
 const showIssueDetails = ref(false);
+const availableBoardSections = ref(props.boardSections);
 
-provide("availableBoardSections", props.boardSections);
+provide("availableBoardSections", availableBoardSections);
 provide("selectedIssue", selectedIssue);
 
 const handleStart = (event) => {
@@ -114,8 +115,6 @@ const updateIssue = (issueData, newIndex) => {
         return section;
     });
 
-    console.log("Updated issue:", issueData);
-
     // Update selectedIssue if it matches the issueData
     if (selectedIssue.value && selectedIssue.value.id === issueData.id) {
         selectedIssue.value = issueData;
@@ -156,6 +155,8 @@ const deleteIssue = (issueId) => {
 
 const createBoardSection = (boardSectionData) => {
     boardSectionsReactive.value.push(boardSectionData);
+
+    updateAvailableBoardSections();
 };
 
 const deleteBoardSection = (boardSectionId) => {
@@ -171,6 +172,19 @@ const deleteBoardSection = (boardSectionId) => {
         emitter.emit("close-issue-details");
         selectedIssue.value = null;
     }
+
+    updateAvailableBoardSections();
+};
+
+const updateAvailableBoardSections = () => {
+    availableBoardSections.value = boardSectionsReactive.value.map(
+        (section) => {
+            return {
+                id: section.id,
+                name: section.name,
+            };
+        }
+    );
 };
 
 const handleClickEvent = (event) => {

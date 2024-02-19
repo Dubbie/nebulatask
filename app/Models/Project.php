@@ -11,6 +11,7 @@ class Project extends Model
     use HasFactory, GeneratesProjectIdTrait;
 
     public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'name',
@@ -21,6 +22,10 @@ class Project extends Model
 
     protected $with = [
         'lead'
+    ];
+
+    protected $casts = [
+        'id' => 'string',
     ];
 
     public function lead()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBoardSectionRequest;
 use App\Models\BoardSection;
+use App\Models\Issue;
 use App\Models\Project;
 use Exception;
 use Illuminate\Http\Request;

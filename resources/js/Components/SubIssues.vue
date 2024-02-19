@@ -38,6 +38,7 @@ const handleNewIssue = () => {
         )
         .then((response) => {
             emitter.emit("issue-updated", response.data.data);
+            showNewIssue.value = false;
         })
         .catch((error) => {
             console.log(error);
@@ -84,7 +85,6 @@ onMounted(() => {
     emitter.on("stop-editing-issue", () => {
         if (showNewIssue.value) {
             handleNewIssue();
-            showNewIssue.value = false;
         }
     });
 });

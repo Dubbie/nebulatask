@@ -96,8 +96,9 @@ class IssueService extends ApiService
 
     public function createSubIssue(Issue $issue, string $title)
     {
+        set_time_limit(5);
         try {
-            $issue->subIssues()->create([
+            $subIssue = $issue->subIssues()->create([
                 'title' => $title,
                 'board_section_id' => $issue->project->boardSections()->type('BACKLOG')->first()->id,
                 'sequence' => $issue->subIssues()->max('sequence') + 1,
@@ -105,9 +106,7 @@ class IssueService extends ApiService
                 'user_id' => $issue->user_id,
             ]);
 
-            $issue->refresh();
-
-            return $this->successResponse($issue);
+            return $this->successResponse($subIssue);
         } catch (Exception $exception) {
             return $this->errorResponse($exception, 500);
         }

@@ -13,6 +13,7 @@ class Issue extends Model
     use HasFactory, GeneratesIssueIdTrait;
 
     public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'title',
@@ -35,6 +36,10 @@ class Issue extends Model
         'type',
         'status',
         'is_complete'
+    ];
+
+    protected $casts = [
+        'id' => 'string',
     ];
 
     protected function type(): Attribute
@@ -65,7 +70,7 @@ class Issue extends Model
 
     public function subIssues()
     {
-        return $this->hasMany(Issue::class, 'parent_issue_id')->orderBy('sequence');
+        return $this->hasMany(Issue::class, 'parent_issue_id', 'id')->orderBy('sequence');
     }
 
     public function boardSection()

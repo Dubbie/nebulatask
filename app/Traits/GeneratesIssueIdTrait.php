@@ -7,7 +7,11 @@ trait GeneratesIssueIdTrait
     protected static function bootGeneratesIssueIdTrait()
     {
         static::creating(function ($model) {
-            $model->id = $model->boardSection->project->code . '-' . ($model->boardSection->project->issues()->count() + 1);
+            $model->id = $model->boardSection->project->code . '-' . ($model->boardSection->project->issue_counter + 1);
+        });
+
+        static::created(function ($model) {
+            $model->boardSection->project->increment('issue_counter');
         });
     }
 }

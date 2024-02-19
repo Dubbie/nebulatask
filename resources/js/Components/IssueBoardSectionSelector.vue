@@ -14,12 +14,14 @@ const issue = inject("issue");
 const boardSection = ref(issue.board_section_id);
 const savingStatus = ref(false);
 const availableBoardSections = inject("availableBoardSections");
-const boardSectionOptions = availableBoardSections.map((_boardSection) => {
-    return {
-        label: _boardSection.name,
-        value: _boardSection.id,
-    };
-});
+const boardSectionOptions = availableBoardSections.value.map(
+    (_boardSection) => {
+        return {
+            label: _boardSection.name,
+            value: _boardSection.id,
+        };
+    }
+);
 
 const updateBoardSection = (newBoardSection) => {
     // const oldStatus = issue.value.issue_status_id;
