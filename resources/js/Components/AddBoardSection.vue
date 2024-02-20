@@ -55,16 +55,16 @@ const handleKeydown = (event) => {
     <div class="shrink-0 flex flex-col rounded-xl w-full max-w-56">
         <div
             v-if="!editing"
-            class="cursor-pointer p-1 flex space-x-2 items-center rounded-xl mb-1.5 px-2 group hover:bg-zinc-100"
+            class="cursor-pointer p-1 flex space-x-2 items-center rounded-xl mb-1.5 px-2 group hover:bg-zinc-100 dark:hover:bg-white/10"
             @click="editing = true"
         >
             <IconPlus
-                class="text-zinc-400 group-hover:text-zinc-700"
+                class="text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-white"
                 size="16"
             />
 
             <p
-                class="flex-1 text-sm mb-0.5 text-zinc-500 font-medium group-hover:text-zinc-700"
+                class="flex-1 text-sm mb-0.5 text-zinc-500 font-medium group-hover:text-zinc-700 dark:group-hover:text-white"
             >
                 New section
             </p>
@@ -99,7 +99,7 @@ const handleKeydown = (event) => {
         </div>
 
         <div
-            class="h-full bg-gradient-to-b rounded-2xl from-zinc-100 to-transparent"
+            class="h-full bg-gradient-to-b rounded-2xl from-zinc-100 to-transparent dark:from-zinc-900"
         ></div>
     </div>
 </template>

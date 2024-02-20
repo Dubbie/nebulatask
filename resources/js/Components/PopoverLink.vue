@@ -20,7 +20,7 @@ const props = defineProps({
 <template>
     <Link
         :href="href"
-        class="cursor-pointer group flex items-center space-x-3 px-4 py-2 rounded-xl hover:bg-zinc-50"
+        class="cursor-pointer group flex items-center space-x-3 px-4 py-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-white/20"
     >
         <div v-if="$slots.icon">
             <slot name="icon" />

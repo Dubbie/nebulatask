@@ -142,7 +142,7 @@ onUnmounted(() => {
     <div class="flex flex-col relative w-56" :class="[cursorClass]">
         <div
             v-if="dragging"
-            class="absolute inset-0 bg-zinc-100 -m-px z-20"
+            class="absolute inset-0 bg-zinc-100 -m-px z-20 dark:bg-zinc-800"
         ></div>
 
         <BoardSectionHeader
@@ -157,8 +157,8 @@ onUnmounted(() => {
                 v-if="highlight || moveButton"
                 class="pointer-events-none absolute inset-0 bg-gradient-to-b to-transparent rounded-2xl"
                 :class="{
-                    'from-zinc-100': highlight || moveButton,
-                    'from-zinc-200': highlight && moveButton,
+                    'from-zinc-100 dark:from-zinc-900': highlight || moveButton,
+                    'from-zinc-200 dark:from-zinc-800': highlight && moveButton,
                 }"
             ></div>
 

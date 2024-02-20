@@ -98,10 +98,12 @@ watch(
         <div
             class="sub-issue-wrapper rounded-xl border-2 border-transparent flex-1"
         >
-            <div class="sub-issue bg-white flex items-center space-x-2 py-1">
+            <div
+                class="sub-issue bg-white flex items-center space-x-2 py-1 dark:bg-transparent"
+            >
                 <div class="cursor-pointer" @click="toggleComplete()">
                     <IconSquareRoundedCheckFilled
-                        class="text-green-500 hover:text-green-500/50"
+                        class="text-green-500 hover:text-green-500/60"
                         v-if="completed"
                     />
                     <div class="group/checkbox relative" v-else>
@@ -110,7 +112,7 @@ watch(
                             class="pointer-events-none absolute mx-1.5 my-1.5 top-0 left-0 text-zinc-300 opacity-0 size-3 group-hover/checkbox:opacity-100"
                         />
                         <IconSquareRounded
-                            class="text-zinc-300 group-hover/checkbox:text-zinc-400"
+                            class="text-zinc-300 group-hover/checkbox:text-zinc-400 dark:text-zinc-600"
                         />
                     </div>
                 </div>

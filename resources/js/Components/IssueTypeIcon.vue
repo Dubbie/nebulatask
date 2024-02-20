@@ -17,7 +17,7 @@ const props = defineProps({
 
 const colorClasses = computed(() => {
     return {
-        ISSUE: "bg-zinc-400 text-white",
+        ISSUE: "bg-zinc-400 text-white dark:bg-zinc-600",
         SUB_ISSUE: "bg-blue-400 text-white",
         EPIC: "bg-orange-400 text-white",
     }[props.type];

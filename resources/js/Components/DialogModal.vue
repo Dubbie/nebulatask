@@ -33,12 +33,12 @@ const close = () => {
         <form @submit.prevent="$emit('submit')">
             <div class="p-8 pb-0">
                 <div
-                    class="text-lg/6 text-balance font-semibold text-zinc-950 sm:text-base/6"
+                    class="text-lg/6 text-balance font-semibold text-zinc-950 sm:text-base/6 dark:text-white"
                 >
                     <slot name="title" />
                 </div>
                 <div
-                    class="text-pretty text-base/6 text-zinc-500 mt-2 sm:text-sm/6"
+                    class="text-pretty text-base/6 text-zinc-500 mt-2 sm:text-sm/6 dark:text-zinc-400"
                     v-if="$slots.description"
                 >
                     <slot name="description" />

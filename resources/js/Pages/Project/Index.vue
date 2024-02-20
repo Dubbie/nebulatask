@@ -33,7 +33,7 @@ const handleCancelConfirmModal = () => {
             <div class="flex">
                 <div class="flex-1">
                     <h2
-                        class="font-semibold text-xl text-gray-800 leading-tight"
+                        class="font-semibold text-xl text-gray-800 leading-tight dark:text-white"
                     >
                         Projects
                     </h2>

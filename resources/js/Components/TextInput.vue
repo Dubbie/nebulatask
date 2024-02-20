@@ -38,7 +38,7 @@ defineExpose({ focus: () => input.value.focus() });
 <template>
     <input
         ref="input"
-        class="border-none ring-inset ring-1 rounded-lg shadow-sm focus:ring-inset focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+        class="border-none ring-inset ring-1 rounded-lg shadow-sm focus:ring-inset focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 dark:text-white dark:bg-white/10 dark:ring-white/15"
         :class="[
             { 'ring-red-500': invalid, 'ring-zinc-950/10': !invalid },
             sizeClasses,

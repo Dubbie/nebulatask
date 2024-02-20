@@ -89,14 +89,14 @@ const maxWidthClass = computed(() => {
                 >
                     <div class="h-full" v-show="show">
                         <div
-                            class="fixed -ml-5 mt-7 p-2 z-10 cursor-pointer bg-white border border-zinc-950/10 rounded-full text-zinc-300 hover:text-zinc-500"
+                            class="fixed -ml-5 mt-7 p-2 z-10 cursor-pointer bg-white border border-zinc-950/10 rounded-full text-zinc-300 hover:text-zinc-500 dark:bg-zinc-950 dark:border-white/15 dark:text-zinc-600"
                             @click="close"
                         >
                             <IconX />
                         </div>
 
                         <div
-                            class="h-full bg-white shadow-xl shadow-zinc-700/5 border-l border-zinc-950/10 transform transition-all sm:w-full"
+                            class="h-full bg-white shadow-xl shadow-zinc-700/5 border-l border-zinc-950/10 transform transition-all sm:w-full dark:bg-zinc-950 dark:text-white dark:border-white/15 dark:shadow-none"
                             :class="maxWidthClass"
                         >
                             <slot v-if="show" />

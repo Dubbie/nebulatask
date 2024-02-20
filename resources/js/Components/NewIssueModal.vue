@@ -7,7 +7,14 @@ import TextInput from "@/Components/TextInput.vue";
 import TextareaInput from "@/Components/TextareaInput.vue";
 import InputError from "@/Components/InputError.vue";
 import SelectInput from "@/Components/SelectInput.vue";
-import { computed, getCurrentInstance, inject, ref } from "vue";
+import {
+    computed,
+    getCurrentInstance,
+    inject,
+    onMounted,
+    onUpdated,
+    ref,
+} from "vue";
 
 const props = defineProps({
     boardSectionId: {
@@ -20,6 +27,7 @@ const props = defineProps({
     },
 });
 
+const darkMode = ref(document.documentElement.classList.contains("dark"));
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const storing = ref(false);
 const buttonLabel = computed(() => {
@@ -53,6 +61,10 @@ const handleSubmit = () => {
 };
 
 const emit = defineEmits(["close"]);
+
+onUpdated(() => {
+    darkMode.value = document.documentElement.classList.contains("dark");
+});
 </script>
 
 <template>
@@ -126,16 +138,14 @@ const emit = defineEmits(["close"]);
 
                 <div class="space-y-3">
                     <div>
-                        <p class="text-zinc-950 font-semibold mb-2.5">
-                            Assigned user
-                        </p>
-                        <div class="flex items-center space-x-2">
+                        <InputLabel>Assigned user</InputLabel>
+                        <div class="flex items-center space-x-2 mt-1">
                             <img
                                 :src="$page.props.auth.user.profile_photo_url"
                                 class="rounded-full size-8"
                                 alt=""
                             />
-                            <p class="font-semibold">
+                            <p class="font-semibold dark:text-white">
                                 {{ $page.props.auth.user.name }}
                             </p>
                         </div>
@@ -145,8 +155,17 @@ const emit = defineEmits(["close"]);
         </template>
 
         <template #footer>
-            <AppButton plain @click="$emit('close')">Cancel</AppButton>
-            <AppButton :disabled="storing" @click="handleSubmit">
+            <AppButton
+                plain
+                @click="$emit('close')"
+                :color="darkMode ? 'white' : 'dark'"
+                >Cancel</AppButton
+            >
+            <AppButton
+                :disabled="storing"
+                @click="handleSubmit"
+                :color="darkMode ? 'white' : 'dark'"
+            >
                 {{ buttonLabel }}
             </AppButton>
         </template>

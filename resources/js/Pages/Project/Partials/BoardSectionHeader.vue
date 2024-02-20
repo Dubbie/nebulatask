@@ -43,15 +43,16 @@ const emit = defineEmits(["newIssue", "highlight", "deleteSection"]);
 </script>
 
 <template>
-    <div @click="editing = true">
+    <div>
         <div class="flex items-center px-2 mb-2" v-if="!editing">
             <p
-                class="ml-1.5 flex-1 text-sm/6 handle cursor-grab text-zinc-500 font-medium"
+                class="ml-1.5 flex-1 text-sm/6 handle cursor-grab text-zinc-500 font-medium dark:text-zinc-400"
                 @mouseenter="$emit('highlight', true)"
                 @mouseleave="$emit('highlight', false)"
+                @click="editing = true"
             >
                 <span>{{ section.name }}</span>
-                <span class="text-zinc-300 ml-2">{{
+                <span class="text-zinc-300 ml-2 dark:text-zinc-600">{{
                     section.issues.length
                 }}</span>
             </p>

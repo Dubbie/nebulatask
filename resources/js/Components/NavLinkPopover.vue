@@ -12,17 +12,27 @@ const showContent = ref(false);
 </script>
 
 <template>
-    <div class="relative">
+    <div class="relative h-full">
         <div
-            class="inline-flex items-center justify-center cursor-pointer h-16 px-1 pt-1 border-b-2 text-sm font-medium leading-5 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out"
+            class="flex items-center justify-center cursor-pointer h-full pt-1 border-b-2 text-sm font-medium leading-5 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out"
             :class="{
-                'text-gray-900 border-indigo-400': active,
-                'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
+                'border-indigo-400 text-zinc-900 dark:border-transparent':
+                    active,
+                'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300 dark:hover:border-transparent':
                     !active,
             }"
             @click="showContent = !showContent"
         >
-            <slot name="trigger" />
+            <div
+                class="px-4 py-2 rounded-xl"
+                :class="{
+                    'dark:bg-white/15 dark:text-white': active,
+                    'dark:hover:bg-white/5 dark:text-zinc-400 dark:hover:text-white':
+                        !active,
+                }"
+            >
+                <slot name="trigger" />
+            </div>
         </div>
 
         <div
@@ -41,7 +51,7 @@ const showContent = ref(false);
         >
             <div
                 v-show="showContent"
-                class="absolute top-full left-1/2 transform -translate-x-1/2 z-10 min-w-64 mt-2 p-4 rounded-2xl shadow-lg shadow-zinc-950/5 bg-white border border-zinc-950/10"
+                class="absolute top-full left-1/2 transform -translate-x-1/2 z-10 min-w-64 mt-2 p-4 rounded-2xl shadow-lg shadow-zinc-950/5 bg-white border border-zinc-950/10 dark:bg-white/10 dark:backdrop-blur dark:border-white/15"
             >
                 <slot name="content" />
             </div>

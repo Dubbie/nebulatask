@@ -46,7 +46,10 @@ const colorClasses = computed(() => {
         " shadow-[inset_0_2px_0_0_rgba(255,255,255,0.2)] before:absolute before:inset-0 before:rounded-lg";
 
     if (props.plain) {
-        return "bg-transparent text-black hover:bg-zinc-300/20";
+        return {
+            dark: "bg-transparent text-black hover:bg-zinc-300/10",
+            white: "bg-transparent text-white hover:bg-white/10",
+        }[props.color];
     }
 
     if (props.outline) {

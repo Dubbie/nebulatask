@@ -2,9 +2,11 @@
 import AppButton from "@/Components/AppButton.vue";
 import { IconTrashFilled } from "@tabler/icons-vue";
 import {
+    computed,
     getCurrentInstance,
     onMounted,
     onUnmounted,
+    onUpdated,
     provide,
     ref,
     watch,
@@ -32,7 +34,7 @@ const props = defineProps({
 });
 const issue = ref(null);
 provide("issue", issue);
-
+const darkMode = ref(document.documentElement.classList.contains("dark"));
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
 const confirmDelete = ref(false);
 const deleting = ref(false);
@@ -87,6 +89,10 @@ onMounted(() => {
 onUnmounted(() => {
     emitter.off("stop-editing");
 });
+
+onUpdated(() => {
+    darkMode.value = document.documentElement.classList.contains("dark");
+});
 </script>
 
 <template>
@@ -117,6 +123,7 @@ onUnmounted(() => {
                     <div class="relative">
                         <AppButton
                             plain
+                            :color="darkMode ? 'white' : 'dark'"
                             @click="confirmDelete = !confirmDelete"
                         >
                             <IconTrashFilled size="16" />
@@ -132,7 +139,7 @@ onUnmounted(() => {
                             leave-to-class="scale-90 opacity-0"
                         >
                             <div
-                                class="absolute z-10 min-w-60 mt-1 top-full right-0 bg-zinc-100 rounded-xl p-3"
+                                class="absolute z-10 min-w-60 mt-1 top-full right-0 bg-zinc-100 rounded-xl p-3 dark:bg-white/10 dark:backdrop-blur"
                                 v-show="confirmDelete"
                             >
                                 <p class="font-medium text-sm">
@@ -144,6 +151,7 @@ onUnmounted(() => {
                                     <AppButton
                                         size="sm"
                                         plain
+                                        :color="darkMode ? 'white' : 'dark'"
                                         @click="confirmDelete = false"
                                         >Cancel</AppButton
                                     >

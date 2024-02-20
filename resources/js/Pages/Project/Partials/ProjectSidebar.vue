@@ -15,10 +15,10 @@ const props = defineProps({
         class="col-span-3 xl:col-span-2 px-4 py-8 sm:px-6 lg:px-8 border-r border-zinc-950/10"
     >
         <div class="mb-6">
-            <h1 class="text-zinc-700 font-semibold">
+            <h1 class="text-zinc-700 font-semibold dark:text-white">
                 {{ project.name }}
             </h1>
-            <p class="text-sm text-zinc-500">
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">
                 {{ project.description ?? "No description" }}
             </p>
         </div>

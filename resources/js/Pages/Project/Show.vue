@@ -319,7 +319,7 @@ onUnmounted(() => {
             <ProjectSidebar :project="project" />
 
             <div
-                class="col-span-9 lg:col-span-9 xl:col-span-10 bg-white py-8 px-4 sm:px-6 lg:px-8 flex flex-col"
+                class="flex flex-col col-span-9 bg-white py-8 px-4 sm:px-6 lg:px-8 lg:col-span-9 xl:col-span-10 dark:bg-zinc-950"
                 @click="emitter.emit('stop-editing')"
             >
                 <h2 class="text-3xl font-semibold mb-6">Board</h2>

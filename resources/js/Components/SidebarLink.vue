@@ -18,7 +18,8 @@ const props = defineProps({
             :href="href"
             class="flex space-x-2 items-center p-2 font-semibold rounded-lg"
             :class="{
-                'bg-zinc-200 text-zinc-600 ': active,
+                'bg-zinc-200 text-zinc-600 dark:bg-white/10 dark:text-white':
+                    active,
                 'text-gray-600 hover:bg-gray-100': !active,
             }"
         >

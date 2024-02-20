@@ -1,14 +1,15 @@
 <script setup>
 import { getCurrentInstance, ref } from "vue";
-import { router, usePage } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
 import ApplicationMark from "@/Components/ApplicationMark.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link } from "@inertiajs/vue3";
-import NavLinkPopover from "./NavLinkPopover.vue";
-import PopoverLink from "./PopoverLink.vue";
+import NavLinkPopover from "@/Components/NavLinkPopover.vue";
+import PopoverLink from "@/Components/PopoverLink.vue";
+import DarkModeToggle from "@/Components/DarkModeToggle.vue";
 
 const props = defineProps({
     fullWidth: {
@@ -38,7 +39,9 @@ const logout = () => {
 </script>
 
 <template>
-    <nav class="bg-white border-b border-zinc-950/10">
+    <nav
+        class="bg-white border-b border-zinc-950/10 dark:bg-zinc-950 dark:border-white/15"
+    >
         <!-- Primary Navigation Menu -->
         <div
             class="px-4 sm:px-6 lg:px-8"
@@ -77,7 +80,7 @@ const logout = () => {
                                     "
                                 >
                                     <p
-                                        class="text-zinc-500 font-medium text-xs px-2 py-1"
+                                        class="text-zinc-500 font-medium text-xs px-2 py-1 dark:text-white/60"
                                     >
                                         Recent projects
                                     </p>
@@ -91,16 +94,16 @@ const logout = () => {
                                             "
                                         />
                                     </div>
-                                    <hr class="my-3" />
+                                    <hr class="dark:border-white/15 my-3" />
                                 </template>
                                 <Link
                                     :href="route('project.index')"
-                                    class="block text-sm font-medium p-1 text-zinc-500 hover:text-zinc-950"
+                                    class="block text-sm font-medium p-1 text-zinc-500 hover:text-zinc-950 dark:text-white/60 dark:hover:text-white"
                                 >
                                     <p>All projects</p>
                                 </Link>
                                 <button
-                                    class="block text-sm font-medium p-1 text-left w-full text-zinc-500 hover:text-zinc-950"
+                                    class="block text-sm font-medium p-1 text-left w-full text-zinc-500 hover:text-zinc-950 dark:text-white/60 dark:hover:text-white"
                                     type="button"
                                     @click="
                                         emitter.emit('show-new-project-modal')
@@ -293,23 +296,26 @@ const logout = () => {
                             <template #content>
                                 <!-- Account Management -->
                                 <div
-                                    class="block px-4 py-2 text-xs text-gray-400"
+                                    class="flex justify-between items-center px-4"
                                 >
-                                    Manage Account
+                                    <div
+                                        class="block py-2 text-xs text-gray-400"
+                                    >
+                                        Manage Account
+                                    </div>
+
+                                    <div>
+                                        <DarkModeToggle />
+                                    </div>
                                 </div>
 
                                 <DropdownLink :href="route('profile.show')">
                                     Profile
                                 </DropdownLink>
 
-                                <DropdownLink
-                                    v-if="$page.props.jetstream.hasApiFeatures"
-                                    :href="route('api-tokens.index')"
-                                >
-                                    API Tokens
-                                </DropdownLink>
-
-                                <div class="border-t border-gray-200 my-1" />
+                                <div
+                                    class="border-t border-zinc-950/10 my-1 dark:border-white/15"
+                                />
 
                                 <!-- Authentication -->
                                 <form @submit.prevent="logout">

@@ -7,9 +7,8 @@ defineProps({
     as: String,
 });
 
-const classes = computed(() => {
-    return "block w-full rounded-lg px-3 py-1.5 text-start text-sm/6 text-zinc-950 hover:bg-indigo-500 hover:text-white focus:outline-none focus:bg-indigo-500";
-});
+const classes =
+    "block w-full rounded-lg px-3 py-1.5 text-start text-sm/6 text-zinc-950 hover:bg-indigo-500 hover:text-white focus:outline-none focus:bg-indigo-500 dark:text-white/60 dark:hover:text-white";
 </script>
 
 <template>

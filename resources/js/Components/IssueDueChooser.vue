@@ -13,10 +13,12 @@ const issue = inject("issue");
 
         <div>
             <div class="flex items-center space-x-2">
-                <div class="p-2 rounded-full bg-zinc-100">
+                <div class="p-2 rounded-full bg-zinc-100 dark:bg-white/10">
                     <IconCalendarTime class="text-zinc-400" size="16" />
                 </div>
-                <p>{{ issue.due_date ?? "No due date" }}</p>
+                <p class="dark:text-zinc-500">
+                    {{ issue.due_date ?? "No due date" }}
+                </p>
             </div>
         </div>
     </div>

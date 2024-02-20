@@ -6,7 +6,7 @@ import TextInput from "@/Components/TextInput.vue";
 import TextareaInput from "@/Components/TextareaInput.vue";
 import InputError from "./InputError.vue";
 import { useForm } from "@inertiajs/vue3";
-import { watch } from "vue";
+import { onUpdated, ref, watch } from "vue";
 
 const props = defineProps({
     show: {
@@ -14,6 +14,8 @@ const props = defineProps({
         default: false,
     },
 });
+
+const darkMode = ref(document.documentElement.classList.contains("dark"));
 
 const form = useForm({
     name: "",
@@ -71,6 +73,10 @@ watch(
         form.code = slugifyString(newProjectName);
     }
 );
+
+onUpdated(() => {
+    darkMode.value = document.documentElement.classList.contains("dark");
+});
 </script>
 
 <template>
@@ -147,8 +153,18 @@ watch(
         </template>
 
         <template #footer>
-            <AppButton plain @click="$emit('close')"> Cancel </AppButton>
-            <AppButton type="submit" :disabled="form.processing">
+            <AppButton
+                plain
+                :color="darkMode ? 'white' : 'dark'"
+                @click="$emit('close')"
+            >
+                Cancel
+            </AppButton>
+            <AppButton
+                :color="darkMode ? 'white' : 'dark'"
+                type="submit"
+                :disabled="form.processing"
+            >
                 Create
             </AppButton>
         </template>

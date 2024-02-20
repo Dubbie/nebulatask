@@ -6,7 +6,7 @@ const props = defineProps({
     },
     backgroundClasses: {
         type: String,
-        default: "bg-white",
+        default: "bg-white dark:bg-zinc-900",
     },
 });
 </script>
