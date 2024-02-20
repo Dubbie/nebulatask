@@ -19,6 +19,10 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    issueId: {
+        type: String,
+        default: null,
+    },
 });
 
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
@@ -53,11 +57,15 @@ const handleChange = (event) => {
     );
 };
 
-const getBoardSections = () => {
+const getBoardSections = (issueId = null) => {
     axios
         .get(route("api.project.board-sections", { project: props.project.id }))
         .then((response) => {
             boardSectionsReactive.value = response.data;
+
+            if (issueId) {
+                emitter.emit("show-issue-details", issueId);
+            }
         });
 };
 
@@ -226,7 +234,7 @@ const findIssueInIssues = (issues, issueId) => {
 };
 
 onMounted(() => {
-    getBoardSections();
+    getBoardSections(props.issueId);
 
     emitter.on("issue-updated", (issueData) => {
         updateIssue(issueData);
@@ -268,13 +276,31 @@ onMounted(() => {
 
     emitter.on("show-issue-details", (issueId) => {
         selectedIssue.value = findIssueById(issueId);
-        console.log(selectedIssue.value);
         showIssueDetails.value = true;
+
+        // Add to URL
+        window.history.replaceState(
+            null,
+            null,
+            route("project.show.issue", {
+                project: props.project.id,
+                issue: issueId,
+            })
+        );
     });
 
     emitter.on("close-issue-details", () => {
         selectedIssue.value = null;
         showIssueDetails.value = false;
+
+        // Remove from URL
+        window.history.replaceState(
+            null,
+            null,
+            route("project.show", {
+                project: props.project.id,
+            })
+        );
     });
 
     emitter.on("update-section-issues", (data) => {

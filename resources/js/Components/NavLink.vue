@@ -13,7 +13,8 @@ const props = defineProps({
         class="h-full inline-flex justify-center items-center pt-1 border-b-2 text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out"
         :class="{
             'border-indigo-400 text-zinc-900 dark:border-transparent': active,
-            'border-transparent text-zinc-500': !active,
+            'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300 dark:hover:border-transparent':
+                !active,
         }"
     >
         <div

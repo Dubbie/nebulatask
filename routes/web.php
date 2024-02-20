@@ -40,9 +40,11 @@ Route::middleware([
 
     // Inertia routes
     Route::get('/projects', [ProjectController::class, 'index'])->name('project.index');
+    Route::get('/projects/{project}/issues/{issue}', [ProjectController::class, 'show'])->name('project.show.issue');
     Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('project.show');
     Route::post('/projects/store', [ProjectController::class, 'store'])->name('project.store');
     Route::delete('/projects/{project}/destroy', [ProjectController::class, 'destroy'])->name('project.destroy');
+
 
     // FE API Routes
     Route::get('/api/project/{project}/issues', [IssueApiController::class, 'fetchByProject'])->name('api.issue.fetch-by-project');

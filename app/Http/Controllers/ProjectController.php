@@ -44,7 +44,7 @@ class ProjectController extends Controller
         return redirect()->route('project.show', ['project' => $response['data']['id']]);
     }
 
-    public function show(Project $project)
+    public function show(Project $project, string $issueId = null)
     {
         // Save to recents
         $recents = Session::get('recents', []);
@@ -56,6 +56,7 @@ class ProjectController extends Controller
         return Inertia::render('Project/Show', [
             'project' => $project,
             'boardSections' => $project->boardSections,
+            'issueId' => $issueId
         ]);
     }
 
