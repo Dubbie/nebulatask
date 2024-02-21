@@ -2,7 +2,6 @@
 import AppButton from "@/Components/AppButton.vue";
 import { IconTrashFilled } from "@tabler/icons-vue";
 import {
-    computed,
     getCurrentInstance,
     onMounted,
     onUnmounted,
@@ -11,7 +10,6 @@ import {
     ref,
     watch,
 } from "vue";
-import { useForm } from "@inertiajs/vue3";
 import IssueTitle from "@/Components/IssueTitle.vue";
 import SubIssues from "@/Components/SubIssues.vue";
 import AppSlideover from "@/Components/AppSlideover.vue";

@@ -60,7 +60,7 @@ const logout = () => {
 
                     <!-- Navigation Links -->
                     <div
-                        class="hidden space-x-4 sm:-my-px sm:ms-10 sm:flex sm:items-center"
+                        class="hidden space-x-4 sm:-my-px sm:ms-10 sm:flex sm:items-center dark:space-x-2"
                     >
                         <NavLink
                             :href="route('dashboard')"

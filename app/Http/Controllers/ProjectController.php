@@ -63,6 +63,13 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         $project->delete();
-        return redirect()->back();
+        return redirect()->to(route('project.index'));
+    }
+
+    public function settings(Project $project)
+    {
+        return Inertia::render('Project/Settings', [
+            'project' => $project
+        ]);
     }
 }

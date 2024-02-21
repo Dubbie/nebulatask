@@ -1,12 +1,5 @@
 <script setup>
-import {
-    getCurrentInstance,
-    inject,
-    onMounted,
-    onUnmounted,
-    ref,
-    watch,
-} from "vue";
+import { getCurrentInstance, inject, onUpdated, ref } from "vue";
 import AppButton from "@/Components/AppButton.vue";
 import NewSubIssue from "@/Components/NewSubIssue.vue";
 import { useForm } from "@inertiajs/vue3";
@@ -18,6 +11,8 @@ const issue = inject("issue");
 const showNewIssue = ref(false);
 const savingSubIssue = ref(false);
 const emitter = getCurrentInstance().appContext.config.globalProperties.emitter;
+const darkMode = ref(document.documentElement.classList.contains("dark"));
+
 const dragging = ref(null);
 let cloneElement = null;
 
@@ -82,11 +77,19 @@ const updatePosition = (event) => {
         updateClonePosition(event);
     }
 };
+
+onUpdated(() => {
+    darkMode.value = document.documentElement.classList.contains("dark");
+});
 </script>
 
 <template>
     <div>
-        <AppButton outline @click="showNewIssue = true" v-show="!showNewIssue"
+        <AppButton
+            outline
+            :color="darkMode ? 'white' : 'dark'"
+            @click="showNewIssue = true"
+            v-show="!showNewIssue"
             >Add sub-issue</AppButton
         >
 

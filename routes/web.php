@@ -44,6 +44,7 @@ Route::middleware([
     Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('project.show');
     Route::post('/projects/store', [ProjectController::class, 'store'])->name('project.store');
     Route::delete('/projects/{project}/destroy', [ProjectController::class, 'destroy'])->name('project.destroy');
+    Route::get('/projects/{project}/settings', [ProjectController::class, 'settings'])->name('project.settings');
 
     // FE API Routes
     Route::get('/api/project/{project}/issues', [IssueApiController::class, 'fetchByProject'])->name('api.issue.fetch-by-project');

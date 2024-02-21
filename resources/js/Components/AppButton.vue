@@ -53,7 +53,11 @@ const colorClasses = computed(() => {
     }
 
     if (props.outline) {
-        return "bg-transparent text-zinc-950 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.15)] hover:bg-zinc-300/10";
+        return {
+            dark: "bg-transparent text-zinc-950 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.15)] hover:bg-zinc-300/10",
+            red: "bg-transparent text-red-500 shadow-[inset_0_0_0_1px_rgba(160,50,50,0.9)] hover:bg-red-500/10",
+            white: "bg-transparent text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.15)] hover:bg-white/10",
+        }[props.color];
     }
 
     return {

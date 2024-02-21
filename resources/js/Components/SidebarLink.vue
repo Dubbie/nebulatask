@@ -18,9 +18,10 @@ const props = defineProps({
             :href="href"
             class="flex space-x-2 items-center p-2 font-semibold rounded-lg"
             :class="{
-                'bg-zinc-200 text-zinc-600 dark:bg-white/10 dark:text-white':
+                'bg-zinc-200 text-zinc-900 dark:bg-white/15 dark:text-white':
                     active,
-                'text-gray-600 hover:bg-gray-100': !active,
+                'text-zinc-400 hover:bg-zinc-200/50 hover:text-zinc-600 dark:hover:bg-transparent dark:hover:text-white':
+                    !active,
             }"
         >
             <slot />
