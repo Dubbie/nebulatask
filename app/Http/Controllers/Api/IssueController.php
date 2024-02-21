@@ -75,6 +75,28 @@ class IssueController extends Controller
         }
     }
 
+    public function updateDueDate(Issue $issue, Request $request)
+    {
+        $request->validate([
+            'due_date' => 'nullable|date|after:today'
+        ]);
+
+        try {
+            $issue->update(['due_date' => $request->input('due_date')]);
+            return response()->json([
+                'success' => true,
+                'data' => $issue,
+                'message' => 'Issue updated successfully',
+            ]);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
     public function fetchByProject(Project $project)
     {
         return $project->boardSections->map->issues->flatten(1);

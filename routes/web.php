@@ -45,13 +45,13 @@ Route::middleware([
     Route::post('/projects/store', [ProjectController::class, 'store'])->name('project.store');
     Route::delete('/projects/{project}/destroy', [ProjectController::class, 'destroy'])->name('project.destroy');
 
-
     // FE API Routes
     Route::get('/api/project/{project}/issues', [IssueApiController::class, 'fetchByProject'])->name('api.issue.fetch-by-project');
     Route::post('/api/issue/{issue}/sub-issue/store', [IssueApiController::class, 'storeSubIssue'])->name('api.issue.sub-issue.store');
     Route::put('/api/issue/{issue}/description/update', [IssueApiController::class, 'updateDescription'])->name('api.issue.description.update');
     Route::put('/api/issue/{issue}/title/update', [IssueApiController::class, 'updateTitle'])->name('api.issue.title.update');
     Route::put('/api/issue/{issue}/status/update', [IssueApiController::class, 'updateStatus'])->name('api.issue.status.update');
+    Route::put('/api/issue/{issue}/due-date/update', [IssueApiController::class, 'updateDueDate'])->name('api.issue.due-date.update');
     Route::get('/api/issue/{issue}', [IssueApiController::class, 'fetch'])->name('api.issue.fetch');
     Route::put('/api/issue/{issue}/moved', [IssueApiController::class, 'handleMove'])->name('api.issue.move');
     Route::delete('/api/issue/{issue}/destroy', [IssueApiController::class, 'destroy'])->name('api.issue.destroy');

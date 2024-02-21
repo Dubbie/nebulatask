@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSubIssueRequest;
 use App\Models\Issue;
 use App\Services\IssueService;
-use Illuminate\Support\Facades\Log;
 
 class SubIssueController extends Controller
 {
@@ -24,14 +23,15 @@ class SubIssueController extends Controller
             $subIssue->delete();
 
             $parent = Issue::find($parentId);
+
             return response()->json([
                 'success' => true,
-                'data' => $parent
+                'data' => $parent,
             ]);
         } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,
-                'message' => $exception->getMessage()
+                'message' => $exception->getMessage(),
             ]);
         }
     }
@@ -44,6 +44,7 @@ class SubIssueController extends Controller
     public function store(Issue $issue, StoreSubIssueRequest $request)
     {
         $data = $request->validated();
+
         return $this->issueService->createSubIssue($issue, $data['title']);
     }
 }
